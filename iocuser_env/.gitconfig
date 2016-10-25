@@ -1,0 +1,15 @@
+[alias]
+        st = status
+        co = checkout
+        ci = commit
+        br = branch
+	hist = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short	
+	type = cat-file -t 
+	dump = cat-file -p
+[color] 
+	diff = auto
+	status = auto
+	compbranch = auto
+
+[core]
+	excludesfile = ${HOME}/.gitignore
