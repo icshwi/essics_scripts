@@ -1,0 +1,237 @@
+#!/bin/sh
+
+XENO_X86="pev-xeno-x86"
+LINUX_X86="pev-linux-x86"
+LINUX_X86_32="pev-linux-x86_32"
+LINUX_X86_64="pev-linux-x86_64"
+LINUX_PPC="pev-linux-ppc"
+HP="hppev"
+VME="vme"
+IDT="idt"
+ADN="adn"
+
+if [ $1 = $XENO_X86 ]; then
+device="pev"
+xmc1="xmc1_"
+xmc2="xmc2_"
+mode="660"
+group="ioc"
+
+echo loading PEV1100 xenomai driver $XENO_X86.ko
+/sbin/insmod $XENO_X86.ko
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $LINUX_X86_64 ]; then
+device="pev"
+xmc1="xmc1_"
+xmc2="xmc2_"
+mode="660"
+group="ioc"
+
+echo loading PEV1100 linux driver $LINUX_X86_64.ko
+/sbin/insmod $LINUX_X86_64.ko
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $LINUX_X86_32 ]; then
+device="pev"
+xmc1="xmc1_"
+xmc2="xmc2_"
+mode="660"
+group="ioc"
+
+echo loading PEV1100 linux driver $LINUX_X86_32.ko
+/sbin/insmod $LINUX_X86_32.ko
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $LINUX_PPC ]; then
+device="pev"
+xmc1="xmc1_"
+xmc2="xmc2_"
+mode="660"
+group="ioc"
+
+echo loading PEV1100 linux driver $LINUX_PPC.ko
+modprobe pev
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $HP ]; then
+device="hppev"
+mode="660"
+group="ioc"
+
+echo loading PEV1100 xenomai driver $HP.ko
+modprobe $HP
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $VME ]; then
+device="vme"
+mode="660"
+group="ioc"
+
+echo loading VME  driver $VME.ko
+modprobe $VME
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $IDT ]; then
+device="idt"
+mode="660"
+group="ioc"
+
+echo loading IDT  driver $IDT.ko
+modprobe $IDT
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+elif [ $1 = $ADN ]; then
+device="adn"
+mode="660"
+group="ioc"
+
+echo loading ADN  driver $ADN.ko
+modprobe $ADN.ko
+if [  $? -ne 0 ]; then 
+exit 1
+fi
+
+else
+echo cannot load module $1
+exit 1
+fi
+
+if [ $device = "pev" ]; then
+
+echo creating PEV devices
+major=$(gawk '$2=="pev" {print $1}' /proc/devices)
+
+rm -f /dev/${device}*
+mknod /dev/$device c $major 0
+mknod /dev/${device}0 c $major 0
+mknod /dev/${device}1 c $major 1
+mknod /dev/${device}2 c $major 2
+mknod /dev/${device}3 c $major 3
+mknod /dev/${device}4 c $major 4
+mknod /dev/${device}5 c $major 5
+mknod /dev/${device}6 c $major 6
+mknod /dev/${device}7 c $major 7
+mknod /dev/${device}8 c $major 8
+mknod /dev/${device}9 c $major 9
+mknod /dev/${device}10 c $major 10
+mknod /dev/${device}11 c $major 11
+mknod /dev/${device}12 c $major 12
+mknod /dev/${device}13 c $major 13
+mknod /dev/${device}14 c $major 14
+mknod /dev/${device}15 c $major 15
+mknod /dev/alt9710 c $major 15
+
+echo creating XMC#1 devices
+rm -f /dev/${xmc1}*
+mknod /dev/$xmc1 c $major 16
+mknod /dev/${xmc1}0 c $major 16
+mknod /dev/${xmc1}1 c $major 17
+mknod /dev/${xmc1}2 c $major 18
+mknod /dev/${xmc1}3 c $major 19
+mknod /dev/${xmc1}4 c $major 20
+mknod /dev/${xmc1}5 c $major 21
+mknod /dev/${xmc1}6 c $major 22
+mknod /dev/${xmc1}7 c $major 23
+mknod /dev/${xmc1}8 c $major 24
+mknod /dev/${xmc1}9 c $major 25
+mknod /dev/${xmc1}10 c $major 26
+mknod /dev/${xmc1}11 c $major 27
+mknod /dev/${xmc1}12 c $major 28
+mknod /dev/${xmc1}13 c $major 29
+mknod /dev/${xmc1}14 c $major 30
+mknod /dev/${xmc1}15 c $major 31
+
+echo creating XMC#2 devices
+rm -f /dev/${xmc2}*
+mknod /dev/$xmc2 c $major 48
+mknod /dev/${xmc2}0 c $major 48
+mknod /dev/${xmc2}1 c $major 49
+mknod /dev/${xmc2}2 c $major 50
+mknod /dev/${xmc2}3 c $major 51
+mknod /dev/${xmc2}4 c $major 52
+mknod /dev/${xmc2}5 c $major 52
+mknod /dev/${xmc2}6 c $major 54
+mknod /dev/${xmc2}7 c $major 55
+mknod /dev/${xmc2}8 c $major 56
+mknod /dev/${xmc2}9 c $major 57
+mknod /dev/${xmc2}10 c $major 58
+mknod /dev/${xmc2}11 c $major 59
+mknod /dev/${xmc2}12 c $major 60
+mknod /dev/${xmc2}13 c $major 61
+mknod /dev/${xmc2}14 c $major 62
+mknod /dev/${xmc2}15 c $major 63
+
+chgrp $group /dev/$device
+chgrp $group /dev/${device}*
+chgrp $group /dev/${xmc1}*
+chgrp $group /dev/${xmc2}*
+
+chmod $mode /dev/$device
+chmod $mode /dev/${device}*
+chmod $mode /dev/${xmc1}*
+chmod $mode /dev/${xmc2}*
+
+elif [ $device = "hppev" ]; then
+
+echo creating HPPEV device
+major=$(gawk '$2=="hppev" {print $1}' /proc/devices)
+
+rm -f /dev/$device
+mknod /dev/$device c $major 0
+
+chgrp $group /dev/$device
+chmod $mode /dev/$device
+
+elif [ $device = "vme" ]; then
+
+echo creating VME device
+major=$(gawk '$2=="vme" {print $1}' /proc/devices)
+
+rm -f /dev/$device
+mknod /dev/$device c $major 0
+
+chgrp $group /dev/$device
+chmod $mode /dev/$device
+
+elif [ $device = "idt" ]; then
+
+echo creating IDT devices
+major=$(gawk '$2=="idt" {print $1}' /proc/devices)
+
+rm -f /dev/${device}*
+mknod /dev/${device}_mas c $major 0
+mknod /dev/${device}_slv1 c $major 1
+mknod /dev/${device}_slv2 c $major 2
+mknod /dev/${device}_slv3 c $major 3
+mknod /dev/${device}_slv4 c $major 4
+
+chgrp $group /dev/${device}*
+chmod $mode /dev/${device}*
+
+elif [ $device = "adn" ]; then
+
+echo creating ADN devices
+major=$(gawk '$2=="adn" {print $1}' /proc/devices)
+
+rm -f /dev/${device}*
+mknod /dev/${device} c $major 0
+
+chgrp $group /dev/${device}*
+chmod $mode /dev/${device}*
+
+fi
