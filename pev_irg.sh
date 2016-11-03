@@ -23,7 +23,8 @@
 #   above highest EPICS thread with 'chrt' command
 #   Anicic Damir (PSI)
 #   
-# - do some cosmetc works for ESS
+# - do  cosmetic works for ESS
+# - add comments 
 #   Jeong Han Lee (ESS)
 #
 #
@@ -46,6 +47,7 @@ declare -gi  PEVIRQPRIO=0;
 #
 # pid is the first item of ps result, so awk uses $1 in order to get pid in ps command
 # ps -eLo rtprio,cls,pid,pri,nice,cmd
+# 
 
 PS_RETURN=$(ps -eLo pid,rtprio,cls,pri,cmd | grep FF | grep ${DEVICE});
 PEVPID=$(echo $PS_RETURN     | awk '{print $1}');
@@ -64,4 +66,7 @@ else
     chrt -f -p ${NEWPEVIRQPRIO} ${PEVPID};
 fi
     
+# it is better to check the pid of pev and softIOC by the following commands
+# ps -eLo pid,rtprio,cls,pri,cmd | grep FF |grep -e pev -e softIoc | grep -v grep | sort -n
+
 exit
