@@ -61,7 +61,7 @@ else
     # -f : --fifo : set policy to SCHED_FIFO
     # -p : --pid  : operate on existing given pid
     #
-    chrt -f -p ${NEWPEVIRQPRIO} -p ${PEVPID};
+    chrt -f -p ${NEWPEVIRQPRIO} ${PEVPID};
 fi
     
 exit
