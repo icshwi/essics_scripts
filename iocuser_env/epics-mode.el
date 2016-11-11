@@ -20,7 +20,9 @@
 ;; 0.1.0    : Thursday, February 12 10:07:06 KST 2015
 ;;            - add proto file into db, so rename
 ;;              epicsdb to epics mode. 
-;;  
+;; 0.1.1    : Friday, November 11 18:06:49 CET 2016,
+;;            - add st.cmd functions
+;; 
 
 ;; The references for writing this codes are 
 ;; 1) http://ergoemacs.org/emacs/elisp_syntax_coloring.html
@@ -840,6 +842,99 @@
 	"exec"
 	"disconnect"
 	"connect"
+	;; st.cmd
+	"epicsEnvSet"
+	"dbLoadRecords"
+	"iocInit"
+	"dbl"
+	"dbpf"
+	"FracSynthAnalyze"
+	"FracSynthControlWord"
+	"addScan"
+	"asDumpHash"
+	"asInit"
+	"asSetFilename"
+	"asSetSubstitutions"
+	"ascar"
+	"asdbdump"
+        "asphag"
+	"aspmem"
+	"asprules"
+	"aspuag"
+	"astac"
+	"callbackSetQueueSize"
+	"casr"
+	"cd"
+	"chmod"
+	"copy"
+	"coreRelease"
+	"cp"
+	"date"
+	"dbDumpBreaktable"
+	"dbDumpDevice"
+	"dbDumpDriver"
+	"dbDumpField"
+	"dbDumpFunction"
+	"dbDumpMenu"
+	"dbDumpPath"
+	"dbDumpRecord"
+	"dbDumpRecordType"
+	"dbDumpRegistrar"
+	"dbDumpVariable"
+	"dbLoadDatabase"
+	"dbLoadRecords"
+	"dbLoadRecordsTemplate"
+	"dbLoadTemplate"
+	"dbLockShowLocked"
+	"dbNotifyDump"
+	"dbPvdDump"
+	"dbPvdTableSize"
+	"dbReportDeviceConfig"
+	"dba"
+	"dbap"
+	"dbb"
+	"dbc"
+	"dbcar"
+	"dbd"
+	"dbel"
+	"dbgf"
+	"dbgrep"
+	"dbhcr"
+	"dbior"
+	"dbl"
+	"dbla"
+	"dblsr"
+	"dbnr"
+	"dbp"
+	"dbpf"
+	"dbpr"
+	"dbs"
+	"dbstat"
+	"dbtgf"
+	"dbtpf"
+	"dbtpn"
+	"dbtr"
+	"dir"
+	"dlload"
+	"dol"
+	"dor"
+	"eltc"
+	"environment_registerRecordDeviceDriver"
+	"epicsEnvSet"
+	"epicsEnvShow"
+	"epicsMutexShowAll"
+	"epicsParamShow"
+	"epicsPrtEnvParams"
+	"epicsThreadResume"
+	"epicsThreadShow"
+	"epicsThreadShowAll"
+	"epicsThreadSleep"
+	"errlog"
+	"errlogInit"
+	"errlogInit2"
+	"help"
+	"iocBuild"
+        "iocInit"
 	)
       )
 
@@ -905,21 +1000,14 @@
 ))
 
 ;;
-;; vdb, db, dbd
+;; vdb, db, dbd, cmd
 ;; http://www.emacswiki.org/emacs/AutoModeAlist
 
 (add-to-list 'auto-mode-alist '("\\.?db\\'" . epics-mode))
 (add-to-list 'auto-mode-alist '("\\.proto\\'" . epics-mode))
 (add-to-list 'auto-mode-alist '("\\.template\\'". epics-mode))
 (add-to-list 'auto-mode-alist '("\\.dbd\\'" . epics-mode))
-
-
-;; (autoload 'markdown-mode "markdown-mode"
-;;    "Major mode for editing Markdown files" t)
-;; (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-;; (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-;; (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-
+(add-to-list 'auto-mode-alist '("\\.cmd\\'" . epics-mode))
 
 
 ;; (defvar epics-indent-offset 4
