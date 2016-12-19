@@ -24,6 +24,25 @@
 #
 
 #   ROOT permission is needed to run this script
+#
+#
+#
+
+# U-boot at IOxOS IFC 1210
+# 
+# setenv fpgaCE "central.bit"; setenv fpgaIO "io.bit";
+# setenv checksd "mmcinfo; fatls mmc 0:1"
+# setenv loadIO "fatload mmc 0:1 $loadaddr $fpgaIO;fpga load io $loadaddr;"
+# setenv loadCE "fatload mmc 0:1 $loadaddr $fpgaCE;fpga load central $loadaddr;"
+# setenv fpgaload "run loadIO; run loadCE;fpga reset 11b01"
+# run checksd; run fpgaload
+
+
+# setenv bootfile "uImage.bin"; setenv fdtfile "uImage.dtb"; 
+# run sdboot
+
+
+
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
@@ -35,8 +54,12 @@ declare TEMP_TARGET_TOP2=${TEMP_TARGET_TOP}2;
 declare IOXOS_SRC_TOP="ioxos_images"
 declare -gr RSYNC_EPICS_LOG="/tmp/rsync-epics.log";
 
+declare TARGET_BITFILE=""
 declare TARGET_BOOT=""
 declare TARGET_EPICS=""
+# fstab : rw permissoin
+# sudo  : chmod +rw permissions 
+declare IOXOS_ROOTFS="ifc1210-ess-rootfs-151203rw.tgz"
 # device /dev/sdX, p=""
 # device /dev/mmcblk0, p="p"
 
@@ -82,17 +105,16 @@ EOF
 
 function home_setup() {
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
-    local root_home=${TEMP_TARGET_TOP2}/home
+    local root_home=${TEMP_TARGET_TOP2}/home/root
     # temp, solution, we need to change /etc/fstab file as rw
     chmod -R +w ${root_home}
     pushd ${root_home}
     git clone https://github.com/jeonghanlee/essics_scripts
-    cp -v ${SC_TOP}/ini.sh .
-    cp -v ${IOXOS_SRC_TOP}/ini.sh .
-    cp -r ${IOXOS_SRC_TOP}/javier .
-#    cp -v ${IOXOS_SRC_TOP}/screen .
+    git clone https://github.com/jeonghanlee/icsem_scripts
+ #   cp -r ${IOXOS_SRC_TOP}/javier .
     popd
-    cp -R ${SC_TOP}/fstab ${TEMP_TARGET_TOP2}/etc/
+    # add the RW fstab in the gz image
+    # cp -R ${SC_TOP}/fstab ${TEMP_TARGET_TOP2}/etc/
     __end_func ${func_name};
 }
 	
@@ -125,7 +147,7 @@ umount ${sdcard_part2}
 
 #dd if=/dev/zero of=${sdcard} bs=512 count=1
 
-dd if=/dev/zero of=${sdcard} bs=1024 count=1024
+dd if=/dev/zero of=${sdcard} bs=512 count=1
 
 # partition 1 : 512M, fat16, bootable
 # partition 2 : total - 512M, linux, non-bootable
@@ -156,22 +178,26 @@ sync
 # the source should be defined in IOXOS_SRC_TOP
 # Later, we can download them from ESS repository...I hope
 
-# #mkdir -p {$TEMP_TARGET_TOP1,$TEMP_TARGET_TOP2}
-mkdir -p $TEMP_TARGET_TOP2
+mkdir -p {$TEMP_TARGET_TOP1,$TEMP_TARGET_TOP2}
+#mkdir -p $TEMP_TARGET_TOP2
 
-# #mount ${sdcard}p1 ${TEMP_TARGET_TOP1}
+mount ${sdcard_part1} ${TEMP_TARGET_TOP1}
 mount ${sdcard_part2} ${TEMP_TARGET_TOP2}
 
 
 printf "Extracting rootfs into %s ... \n" "${TEMP_TARGET_TOP2}";
 
-tar xf ${IOXOS_SRC_TOP}/ifc1210-ess-rootfs-151203.tar -C ${TEMP_TARGET_TOP2}
+tar zxf ${IOXOS_SRC_TOP}/${IOXOS_ROOTFS} -C ${TEMP_TARGET_TOP2}
 
-TARGET_BOOT=${TEMP_TARGET_TOP2}/boot/
+
+
+TARGET_BITFILE=${TEMP_TARGET_TOP1}/
+TARGET_BOOT=${TEMP_TARGET_TOP2}/boot
 TARGET_EPICS=${TEMP_TARGET_TOP2}/opt/epics
 
+cp -v ${IOXOS_SRC_TOP}/*.bit    ${TARGET_BITFILE}
 cp -v ${IOXOS_SRC_TOP}/uImage.* ${TARGET_BOOT}
-cp -v ${IOXOS_SRC_TOP}/*.bit    ${TARGET_BOOT}
+
 
 printf "\n* One should wait for rsync EPICS processe \n  in order to check the ESS EPICS Environment.\n  tail -n 10 -f ${RSYNC_EPICS_LOG}";
 
@@ -186,11 +212,11 @@ sync
 sync
 printf "End Sync... \n";
 
-printf "\nUnmount\n" "${TEMP_TARGET_TOP2}";
+printf "\nUmount %s ....\n" "${TEMP_TARGET_TOP2}";
+printf "Umount %s .... \n" "${TEMP_TARGET_TOP1}";
 
-
-#umount ${TEMP_TARGET_TOP1}
 umount ${TEMP_TARGET_TOP2}
 
+umount ${TEMP_TARGET_TOP1}
 
 exit
