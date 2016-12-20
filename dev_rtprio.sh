@@ -19,6 +19,12 @@
 #
 #
 # - increase a IRQ thread priority of an input device
+#
+#  author : Jeong Han Lee
+#  email  : han.lee@esss.se
+#  date   : 
+#  version : 0.0.1
+
 
 # root@:~# chrt -m
 # SCHED_OTHER min/max priority    : 0/0
@@ -30,6 +36,28 @@
 # it is better to check the pid of device_name and softIOC by the following commands
 # ps -eLo pid,rtprio,cls,pri,cmd | grep FF |grep -e device_name -e softIoc | grep -v grep | sort -n
 
+
+function check_PREEMPT_RT(){
+
+    local kernel_uname=$(uname -r)
+    local rt_patch="preempt-rt";
+    local kernel_status=0;
+    local realtime_status=$(cat /sys/kernel/realtime)
+    
+    if test "${kernel_uname#*$rt_patch}" != "${kernel_uname}"; then
+	kernel_status=1;
+    else
+	kernel_status=0;
+    fi
+    
+    if [[ $kernel_status && $realtime_status ]]; then
+	printf "This is the realtime patch system, and go further\n";
+    else
+	printf "This is not the realtime patch systme, and stop here
+n";
+	exit;
+    fi
+}
 
 
 declare DEVICE="$1";
@@ -48,6 +76,7 @@ if [ -z "${DEVICE}" ]; then
         exit 0
 fi
 
+check_PREEMPT_RT
 
 
 declare NEWIRQPRIO=98;

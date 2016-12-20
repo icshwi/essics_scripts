@@ -23,6 +23,12 @@
 #  defined in the original ioxos_load script.
 #  Tuesday, December 20 10:55:22 CET 2016, 
 # 
+#  
+#  author : Jeong Han Lee
+#  email  : han.lee@esss.se
+#  date   : 
+#  version : 0.0.1
+#
 
 mode="660"
 # We don't have any group definition yet
@@ -36,27 +42,24 @@ declare xmc2="xmc2_"
 
 function check_PREEMPT_RT(){
 
-
-    # check PREEMPT_RT kernel, if not, print a notice....
+    local kernel_uname=$(uname -r)
+    local rt_patch="preempt-rt";
+    local kernel_status=0;
+    local realtime_status=$(cat /sys/kernel/realtime)
     
-    # # int main(int argc, char **argv)
-    # #{
-    # #    struct utsname u;
-    # #    int crit1, crit2 = 0;
-    #     FILE *fd;
+    if test "${kernel_uname#*$rt_patch}" != "${kernel_uname}"; then
+	kernel_status=1;
+    else
+	kernel_status=0;
+    fi
     
-    #     uname(&u);
-    #     crit1 = strcasestr (u.version, "PREEMPT RT");
-    
-    #     if ((fd = fopen("/sys/kernel/realtime","r")) != NULL) {
-    #         int flag;
-    #         crit2 = ((fscanf(fd, "%d", &flag) == 1) && (flag == 1));
-    #         fclose(fd);
-    #     }
-    #     fprintf(stderr, "this is a %s kernel\n",
-    #             (crit1 && crit2)  ? "PREEMPT RT" : "vanilla");
-    # }
-    
+    if [[ $kernel_status && $realtime_status ]]; then
+	printf "This is the realtime patch system, and go further\n";
+    else
+	printf "This is not the realtime patch systme, and stop here
+n";
+	exit;
+    fi
 }
 
 check_PREEMPT_RT
@@ -76,7 +79,9 @@ fi
 printf "Creating devices %s %s %s in /dev/\n" "${dev0}" "${xmc1}" "${xmc2}";
 
 # Get the device major number
-major=$(gawk '$2=="${device}" {print $1}' /proc/devices)
+# hard-coded name (pev)
+
+major=$(gawk '$2=="pev" {print $1}' /proc/devices)
 
 # Remove all pev{?} devices
 rm -f /dev/${dev0}*
@@ -94,6 +99,9 @@ let minor_offset_xmc1=16;
 let minor_offset_xmc2=48;
 let i=0;
 
+
+printf "Creating %s %s %s devices...\n" "$dev0" "$xmc1" "$xmc2"; 
+
 mknod /dev/${dev0} c ${major} ${minor_offset_dev0}
 mknod /dev/${xmc1} c ${major} ${minor_offset_xmc1}
 mknod /dev/${xmc2} c ${major} ${minor_offset_xmc2}
@@ -109,38 +117,9 @@ done
 # what is this?
 mknod /dev/alt9710 c $major 15
 
-printf "Creating XMC#1 %s devices\n" "$xmc1";
-
-# let i=0;
-
-# for i in `seq 0 15`; do
-#     minor=$(($minor_offset_xmc1 + $i)) ;
-#     mknod /dev/${xmc1}${i}  c ${major} ${minor} ;
-# done
-
-
-# printf "Creating XMC#2 %s devices\n" "$xmc2";
-
-
-
-# let i=0;
-
-
-# for i in `seq 0 15`; do
-#     minor=$(($minor_offset_xmc1 + $i)) ;
-#     mknod /dev/${xmc2}${i}  c ${major} ${minor} ;
-# done
-
 
 chgrp $group /dev/{${dev0}*,${xmc1}*,${xmc2}*}
-#chgrp $group /dev/${device}*
-#chgrp $group /dev/${xmc1}*
-#chgrp $group /dev/${xmc2}*
-
 chmod $mode /dev/{${dev0}*,${xmc1}*,${xmc2}*}
-#chmod $mode /dev/${device}*
-#chmod $mode /dev/${xmc1}*
-#chmod $mode /dev/${xmc2}*
 
 
 exit
