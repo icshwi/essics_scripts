@@ -1,0 +1,146 @@
+#!/bin/sh
+#
+#  Copyright (c) 2016 European Spallation Source ERIC
+#  Copyright (c) 2016 Paul Scherrer Institute
+#  Copyright (c) 2016 Jeong Han Lee
+#
+#  The program is free software: you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation, either version 2 of the
+#  License, or any newer version.
+#
+#  This program is distributed in the hope that it will be useful, but WITHOUT
+#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+#  more details.
+#
+#  You should have received a copy of the GNU General Public License along with
+#  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
+#
+#
+#  Since ESS uses only the IFC 12XX and 14XX with PowerPC archtecture, we don't
+#  need to handle xeno, linux-x86, linux-x86_64 and HP, VME, idt, adn, which are
+#  defined in the original ioxos_load script.
+#  Tuesday, December 20 10:55:22 CET 2016, 
+# 
+
+mode="660"
+# We don't have any group definition yet
+# 
+group="ioc"
+
+declare dev0="pev";
+declare xmc1="xmc1_"
+declare xmc2="xmc2_"
+
+
+function check_PREEMPT_RT(){
+
+
+    # check PREEMPT_RT kernel, if not, print a notice....
+    
+    # # int main(int argc, char **argv)
+    # #{
+    # #    struct utsname u;
+    # #    int crit1, crit2 = 0;
+    #     FILE *fd;
+    
+    #     uname(&u);
+    #     crit1 = strcasestr (u.version, "PREEMPT RT");
+    
+    #     if ((fd = fopen("/sys/kernel/realtime","r")) != NULL) {
+    #         int flag;
+    #         crit2 = ((fscanf(fd, "%d", &flag) == 1) && (flag == 1));
+    #         fclose(fd);
+    #     }
+    #     fprintf(stderr, "this is a %s kernel\n",
+    #             (crit1 && crit2)  ? "PREEMPT RT" : "vanilla");
+    # }
+    
+}
+
+check_PREEMPT_RT
+
+printf "Loading PEV Linux Driver for IOxOX IFC platform\n";
+
+modprobe ${dev0}
+
+printf "Show modinfo %s\n" "${dev0}";
+modinfo ${dev0}
+
+if [  $? -ne 0 ]; then
+    printf "Please check %s\n" "${dev0}";
+    exit 1
+fi
+
+printf "Creating devices %s %s %s in /dev/\n" "${dev0}" "${xmc1}" "${xmc2}";
+
+# Get the device major number
+major=$(gawk '$2=="${device}" {print $1}' /proc/devices)
+
+# Remove all pev{?} devices
+rm -f /dev/${dev0}*
+rm -f /dev/${xmc1}*
+rm -f /dev/${xmc2}*
+
+
+# Make node ${dev0}, ${xmc1}, ${xmc2} with the major number and the minor number 
+
+# mknod NAME TYPE [MAJOR MINOR]
+# TYPE c : character (unbuffered) spefical file
+
+let minor_offset_dev0=0;
+let minor_offset_xmc1=16;
+let minor_offset_xmc2=48;
+let i=0;
+
+mknod /dev/${dev0} c ${major} ${minor_offset_dev0}
+mknod /dev/${xmc1} c ${major} ${minor_offset_xmc1}
+mknod /dev/${xmc2} c ${major} ${minor_offset_xmc2}
+
+for i in `seq 0 15`; do
+    minor1=$(($minor_offset_xmc1 + $i)) ;
+    minor2=$(($minor_offset_xmc2 + $i)) ;
+    mknod /dev/${dev0}${i} c ${major} ${i}
+    mknod /dev/${xmc1}${i} c ${major} ${minor1} ;
+    mknod /dev/${xmc2}${i} c ${major} ${minor2} ;
+done    
+
+# what is this?
+mknod /dev/alt9710 c $major 15
+
+printf "Creating XMC#1 %s devices\n" "$xmc1";
+
+# let i=0;
+
+# for i in `seq 0 15`; do
+#     minor=$(($minor_offset_xmc1 + $i)) ;
+#     mknod /dev/${xmc1}${i}  c ${major} ${minor} ;
+# done
+
+
+# printf "Creating XMC#2 %s devices\n" "$xmc2";
+
+
+
+# let i=0;
+
+
+# for i in `seq 0 15`; do
+#     minor=$(($minor_offset_xmc1 + $i)) ;
+#     mknod /dev/${xmc2}${i}  c ${major} ${minor} ;
+# done
+
+
+chgrp $group /dev/{${dev0}*,${xmc1}*,${xmc2}*}
+#chgrp $group /dev/${device}*
+#chgrp $group /dev/${xmc1}*
+#chgrp $group /dev/${xmc2}*
+
+chmod $mode /dev/{${dev0}*,${xmc1}*,${xmc2}*}
+#chmod $mode /dev/${device}*
+#chmod $mode /dev/${xmc1}*
+#chmod $mode /dev/${xmc2}*
+
+
+exit
