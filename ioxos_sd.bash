@@ -29,17 +29,29 @@
 #
 
 # U-boot at IOxOS IFC 1210
+#
+# The following configuration was replaced with ${IOXOS_SRC_TOP}/uEnv_sd.txt binary file
+# It will be located in the first partition in SD card.
 # 
 # setenv fpgaCE "central.bit"; setenv fpgaIO "io.bit";
-# setenv checksd "mmcinfo; fatls mmc 0:1"
 # setenv loadIO "fatload mmc 0:1 $loadaddr $fpgaIO;fpga load io $loadaddr;"
 # setenv loadCE "fatload mmc 0:1 $loadaddr $fpgaCE;fpga load central $loadaddr;"
 # setenv fpgaload "run loadIO; run loadCE;fpga reset 11b01"
-# run checksd; run fpgaload
-
-
-# setenv bootfile "uImage.bin"; setenv fdtfile "uImage.dtb"; 
+# setenv bootfile "uImage.bin"; setenv fdtfile "uImage.dtb";
+# mmcinfo; run fpgaload
 # run sdboot
+
+# We have to change one important parameter in the configuration of a default
+# U-boot of the IOxOS IFC 1210 board
+#
+# setenv envload 'mmcinfo; if fatload mmc 0:1 $loadaddr uEnv_sd.txt; then source $loadaddr && run sdboot; else false; fi'
+# setenv bootdelay 5
+# saveenv
+#
+# then, we can boot it automatically.
+
+
+
 
 
 
@@ -195,8 +207,9 @@ TARGET_BITFILE=${TEMP_TARGET_TOP1}/
 TARGET_BOOT=${TEMP_TARGET_TOP2}/boot
 TARGET_EPICS=${TEMP_TARGET_TOP2}/opt/epics
 
-cp -v ${IOXOS_SRC_TOP}/*.bit    ${TARGET_BITFILE}
-cp -v ${IOXOS_SRC_TOP}/uImage.* ${TARGET_BOOT}
+cp -v ${IOXOS_SRC_TOP}/*.bit       ${TARGET_BITFILE}
+cp -v ${IOXOS_SRC_TOP}/uEnv_sd.txt ${TARGET_BITFILE}
+cp -v ${IOXOS_SRC_TOP}/uImage.*    ${TARGET_BOOT}
 
 
 printf "\n* One should wait for rsync EPICS processe \n  in order to check the ESS EPICS Environment.\n  tail -n 10 -f ${RSYNC_EPICS_LOG}";
