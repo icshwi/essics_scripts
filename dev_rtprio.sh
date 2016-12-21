@@ -36,7 +36,6 @@
 # it is better to check the pid of device_name and softIOC by the following commands
 # ps -eLo pid,rtprio,cls,pri,cmd | grep FF |grep -e device_name -e softIoc | grep -v grep | sort -n
 
-
 function check_PREEMPT_RT(){
 
     local kernel_uname=$(uname -r)
@@ -51,14 +50,16 @@ function check_PREEMPT_RT(){
     fi
     
     if [[ $kernel_status && $realtime_status ]]; then
-	printf "This is the realtime patch system, and go further\n";
+	printf "This is the realtime patch system, and go further...\n";
     else
-	printf "This is not the realtime patch systme, and stop here
-n";
+	printf "This is not the realtime patch system, and stop here\n";
 	exit;
     fi
 }
 
+printf "Check whether the kernel supports realtime features\n";
+
+check_PREEMPT_RT
 
 declare DEVICE="$1";
 

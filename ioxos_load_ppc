@@ -1,7 +1,6 @@
 #!/bin/sh
 #
 #  Copyright (c) 2016 European Spallation Source ERIC
-#  Copyright (c) 2016 Paul Scherrer Institute
 #  Copyright (c) 2016 Jeong Han Lee
 #
 #  The program is free software: you can redistribute
@@ -21,19 +20,24 @@
 #  Since ESS uses only the IFC 12XX and 14XX with PowerPC archtecture, we don't
 #  need to handle xeno, linux-x86, linux-x86_64 and HP, VME, idt, adn, which are
 #  defined in the original ioxos_load script.
+#
+#  Note that the original ioxos_load has no copyright and no license.
+#
 #  Tuesday, December 20 10:55:22 CET 2016, 
 # 
 #  
-#  author : Jeong Han Lee
-#  email  : han.lee@esss.se
-#  date   : 
+#  author  : Jeong Han Lee
+#  email   : han.lee@esss.se
+#  date    : Wednesday, December 21 08:43:18 CET 2016
 #  version : 0.0.1
 #
 
-mode="660"
-# We don't have any group definition yet
+declare mode="660"
+#
+# We don't have any group definition yet, but
+# I guess we will use the ioc group soon. 
 # 
-group="ioc"
+declare group="ioc"
 
 declare dev0="pev";
 declare xmc1="xmc1_"
@@ -54,51 +58,51 @@ function check_PREEMPT_RT(){
     fi
     
     if [[ $kernel_status && $realtime_status ]]; then
-	printf "This is the realtime patch system, and go further\n";
+	printf "This is the realtime patch system, and go further...\n";
     else
-	printf "This is not the realtime patch systme, and stop here
-n";
+	printf "This is not the realtime patch system, and stop here\n";
 	exit;
     fi
 }
 
+printf "Check whether the kernel supports realtime features\n";
+
 check_PREEMPT_RT
 
+
 printf "Loading PEV Linux Driver for IOxOX IFC platform\n";
-
 modprobe ${dev0}
-
-printf "Show modinfo %s\n" "${dev0}";
-modinfo ${dev0}
 
 if [  $? -ne 0 ]; then
     printf "Please check %s\n" "${dev0}";
     exit 1
 fi
 
-printf "Creating devices %s %s %s in /dev/\n" "${dev0}" "${xmc1}" "${xmc2}";
+printf "Show modinfo %s\n" "${dev0}";
+modinfo ${dev0}
 
+
+printf "Creating devices %s %s %s in /dev/\n" "${dev0}" "${xmc1}" "${xmc2}";
 # Get the device major number
 # hard-coded name (pev)
-
 major=$(gawk '$2=="pev" {print $1}' /proc/devices)
 
-# Remove all pev{?} devices
+# Remove all potential existent pev{?} and xmc* devices
 rm -f /dev/${dev0}*
 rm -f /dev/${xmc1}*
 rm -f /dev/${xmc2}*
 
 
 # Make node ${dev0}, ${xmc1}, ${xmc2} with the major number and the minor number 
-
 # mknod NAME TYPE [MAJOR MINOR]
 # TYPE c : character (unbuffered) spefical file
 
+# Use the same offset of the original ioxos_load script
+#
 let minor_offset_dev0=0;
 let minor_offset_xmc1=16;
 let minor_offset_xmc2=48;
 let i=0;
-
 
 printf "Creating %s %s %s devices...\n" "$dev0" "$xmc1" "$xmc2"; 
 
@@ -114,12 +118,12 @@ for i in `seq 0 15`; do
     mknod /dev/${xmc2}${i} c ${major} ${minor2} ;
 done    
 
-# what is this?
+# what this is? do we need this? 
 mknod /dev/alt9710 c $major 15
 
+printf "Changing group and mode in  %s %s %s devices...\n" "$dev0" "$xmc1" "$xmc2"; 
 
 chgrp $group /dev/{${dev0}*,${xmc1}*,${xmc2}*}
 chmod $mode /dev/{${dev0}*,${xmc1}*,${xmc2}*}
-
 
 exit
