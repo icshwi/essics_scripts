@@ -1,0 +1,96 @@
+# -*- mode: sh -*-
+#
+#  Copyright (c) 2016 Jeong Han Lee
+#  Copyright (c) 2016 European Spallation Source ERIC
+#
+#  The program is free software: you can redistribute
+#  it and/or modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation, either version 2 of the
+#  License, or any newer version.
+#
+#  This program is distributed in the hope that it will be useful, but WITHOUT
+#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+#  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+#  more details.
+#
+#  You should have received a copy of the GNU General Public License along with
+#  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
+#
+#  Author  : Jeong Han Lee
+#  Email   : han.lee@esss.se
+#  Date    : Monday, January 30 11:19:13 CET 2017
+#  Version : 0.0.1
+
+
+function get_kernel_version() {
+    KERNEL_VER=$(uname -r);
+}
+
+
+function get_java_version() {
+    JAVA_VER=$(java -version 2>&1 | head -n 1 | awk -F '"' '{print $2}')
+}
+
+
+function get_centos_version() {
+    OS_VER=$(cat ${OS_VERPATH}  | awk -F' ' '{print $4}')
+}
+
+function get_css_version() {
+
+    CSS_VER=$(cat ${CSS_VERPATH})
+}
+
+
+function print_eee_env(){
+    
+    printf "EPICS Bases Path   : %s\n" "${EPICS_BASES_PATH}"
+    printf "EPICS Modules path : %s\n" "${EPICS_MODULES_PATH}"
+    printf "EPICS Host Arch    : %s\n" "${EPICS_HOST_ARCH}"
+    printf "EPICS BASE         : %s\n" "${EPICS_BASE}"
+    printf "EPICS_ENV_PATH     : %s\n" "${EPICS_ENV_PATH}"
+}
+
+
+function print_summary() {
+    printf "\n";
+    printf "System Information generated at %s\n" "${SC_LOGDATE}";
+    printf "\n";
+
+    printf "Kernel     Version : %s\n" "${KERNEL_VER}";
+    printf "CentOS     Version : %s\n" "${OS_VER}";
+    printf "JAVA       Version : %s\n" "${JAVA_VER}";
+    printf "CS Studio  Version : %s\n" "${CSS_VER}";
+    
+    print_eee_env
+
+    printf "\n";
+}
+
+
+PRETTY_NAME=
+NAME=
+VERSION_ID=
+VERSION=
+ID=
+HOME_URL=
+SUPPORT_URL=
+BUG_REPORT_URL=
+
+
+
+
+function os_release() {
+
+    eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME|NAME|VERSION_ID|VERSION|ID|HOME_URL|SUPPORT_URL|BUG_REPORT_URL)=")
+    printf "OS Release Information \n";
+    printf "PRETTY_NAME    = %s\n" "${PRETTY_NAME}"
+    printf "NAME           = %s\n" "${NAME}"
+    printf "VERSION_ID     = %s\n" "${VERSION_ID}"
+    printf "VERSION        = %s\n" "${VERSION}"
+    printf "ID             = %s\n" "${ID}"
+    printf "HOME_URL       = %s\n" "${HOME_URL}"
+    printf "SUPPORT_URL    = %s\n" "${SUPPORT_URL}"
+    printf "BUG_REPORT_URL = %s\n" "${BUG_REPORT_URL}"
+
+}
