@@ -19,8 +19,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : 
-#   version : 0.1.0
+#   date    : Tuesday, January 31 16:50:03 CET 2017
+#   version : 0.1.1
 #
 
 #   ROOT permission is needed to run this script
@@ -123,10 +123,10 @@ function home_setup() {
     pushd ${root_home}
     git clone https://github.com/jeonghanlee/essics_scripts
     git clone https://github.com/jeonghanlee/icsem_scripts
- #   cp -r ${IOXOS_SRC_TOP}/javier .
     popd
     # add the RW fstab in the gz image
     # cp -R ${SC_TOP}/fstab ${TEMP_TARGET_TOP2}/etc/
+ 
     __end_func ${func_name};
 }
 	
@@ -206,11 +206,14 @@ tar zxf ${IOXOS_SRC_TOP}/${IOXOS_ROOTFS} -C ${TEMP_TARGET_TOP2}
 TARGET_BITFILE=${TEMP_TARGET_TOP1}/
 TARGET_BOOT=${TEMP_TARGET_TOP2}/boot
 TARGET_EPICS=${TEMP_TARGET_TOP2}/opt/epics
+TARGET_SYSTEMD=${TEMP_TARGET_TOP2}/lib/systemd/system/
+SRC_SYSTEMD=${SC_TOP}/ioxos_sd_fs/pevautostart.service
 
 cp -v ${IOXOS_SRC_TOP}/*.bit       ${TARGET_BITFILE}
 cp -v ${IOXOS_SRC_TOP}/uEnv_sd.txt ${TARGET_BITFILE}
 cp -v ${IOXOS_SRC_TOP}/uImage.*    ${TARGET_BOOT}
-
+cp -v ${SRC_SYSTEMD} ${TARGET_SYSTEMD}
+    
 
 printf "\n* One should wait for rsync EPICS processe \n  in order to check the ESS EPICS Environment.\n  tail -n 10 -f ${RSYNC_EPICS_LOG}";
 
