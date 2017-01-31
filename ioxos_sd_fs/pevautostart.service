@@ -8,3 +8,4 @@ ExecStart=/home/root/essics_scripts/initPev.sh
                                               
 [Install]                                     
 WantedBy=multi-user.target
+Alias=pevautostart.service
