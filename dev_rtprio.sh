@@ -59,8 +59,6 @@ function check_PREEMPT_RT(){
 
 printf "Check whether the kernel supports realtime features\n";
 
-check_PREEMPT_RT
-
 declare DEVICE="$1";
 
 if [ -z "${DEVICE}" ]; then

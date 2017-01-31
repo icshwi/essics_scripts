@@ -1,0 +1,10 @@
+[Unit]
+SourcePath=/home/root/essics_scripts/initPev.sh
+Description=PEV Kernel module and its IRQ prio
+After=network.target
+
+[Service]
+ExecStart=/home/root/essics_scripts/initPev.sh
+                                              
+[Install]                                     
+WantedBy=multi-user.target
