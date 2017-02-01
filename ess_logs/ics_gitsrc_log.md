@@ -1,8 +1,8 @@
 ## Make the ICS git source dir
-
+``
 [iocuser@localhost ~]$ mkdir ics_gitsrc
 [iocuser@localhost ~]$ cd ics_gitsrc/
-
+```
 ## Install CSS
 ```
 [iocuser@localhost ics_gitsrc]$  curl -L https://git.io/vMyeU -o css_setup.bash
