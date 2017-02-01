@@ -4,7 +4,7 @@
 [iocuser@localhost ~]$ cd ics_gitsrc/
 
 ## Install CSS
-
+```
 [iocuser@localhost ics_gitsrc]$  curl -L https://git.io/vMyeU -o css_setup.bash
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
@@ -37,7 +37,7 @@ Saving to: ‘cs-studio-ess-4.4.1.3-linux.gtk.x86_64.tar.gz’
 /opt/cs-studio-4.4.1.3/configuration/plugin_customization.ini
 
 <<<< You are leaving from : update_css_configuration
-
+```
 
 
 
