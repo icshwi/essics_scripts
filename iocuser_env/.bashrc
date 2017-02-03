@@ -23,7 +23,7 @@ source ~/.git-completion.bash
 
 case "$TERM" in
 xterm*|rxvt*)
-	PS1='\u@\h:\w\a$(__git_ps1 " (%s)")\$ '
+    PS1='\u@\h: \W$(__git_ps1 " (%s)")\$ '
     ;;
 *)
     ;;
