@@ -20,7 +20,7 @@
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
 #   date    : Tuesday, January 31 16:50:03 CET 2017
-#   version : 0.1.1
+#   version : 0.1.2
 #
 
 #   ROOT permission is needed to run this script
@@ -121,8 +121,8 @@ function home_setup() {
     # temp, solution, we need to change /etc/fstab file as rw
     chmod -R +w ${root_home}
     pushd ${root_home}
-    git clone https://github.com/jeonghanlee/essics_scripts
-    git clone https://github.com/jeonghanlee/icsem_scripts
+    git clone https://github.com/icshwi/essics_scripts
+    git clone https://github.com/icshwi/icsem_scripts
     popd
     # add the RW fstab in the gz image
     # cp -R ${SC_TOP}/fstab ${TEMP_TARGET_TOP2}/etc/
