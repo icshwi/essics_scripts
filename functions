@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  Email   : han.lee@esss.se
-#  Date    : Monday, January 30 11:19:13 CET 2017
-#  Version : 0.0.1
+#  Date    : 
+#  Version : 0.0.2
 
 
 function get_kernel_version() {
@@ -52,10 +52,60 @@ function print_eee_env(){
 }
 
 
+function print_yum_repos() {
+
+    printf "\n"
+    printf "Yum repository status :\n";
+    printf ">>  "
+    ls -l ${YUM_REPOSD_PATH}
+}
+
+function find_mrf_rule() {
+
+    local rule=$1;
+    if [[ ! -f ${rule} ]]; then
+	printf ">> %s doesn't exist. Maybe this system doens't have any EVENT system\n" "${rule}";
+    else
+	printf ">> %s was found. \n" "${rule}"
+	printf "   ${rule} contains \n"
+	printf "   >>> "
+	cat ${rule}
+	printf "\n"
+    fi
+}
+
+
+function print_mrf_env() {
+
+    printf "\n"
+    printf "MRF ENV :\n";
+    printf ">> modinfo \n";
+    modinfo mrf ;
+    printf "\n"
+
+    find_mrf_rule ${MRF_KMOD_CONF}
+    find_mrf_rule ${MRF_UDEV_RULES}
+    
+}
+
+
+function print_pccid_env() {
+
+    printf "\n";
+    printf "MRF HW: \n";
+    printf ">>  "
+    find_in_lspci ${MRF_PCIID}
+    printf "\n"
+    printf "STRUCK HW: \n";
+    printf ">>  "
+    find_in_lspci ${STRUCK_PCIID}
+    printf "\n"
+}
+
 function print_summary() {
+
     printf "\n";
-    printf "System Information generated at %s\n" "${SC_LOGDATE}";
-    printf "\n";
+    printf "System Information generated at %s\n\n" "${SC_LOGDATE}";
 
     printf "Kernel     Version : %s\n" "${KERNEL_VER}";
     printf "CentOS     Version : %s\n" "${OS_VER}";
@@ -63,10 +113,28 @@ function print_summary() {
     printf "CS Studio  Version : %s\n" "${CSS_VER}";
     
     print_eee_env
+    print_yum_repos
+    print_mrf_env
+    print_pccid_env
 
     printf "\n";
 }
 
+function find_in_thing() {
+
+    local object=$1;
+    local thing=$2;
+
+    grep -r ${object} "${thing}"
+}
+
+function find_in_lspci() {
+    
+    local id=$1;
+    
+    lspci -nmmn | grep -E "\<(${id})"
+
+}
 
 PRETTY_NAME=
 NAME=
@@ -83,14 +151,14 @@ BUG_REPORT_URL=
 function os_release() {
 
     eval $(cat /etc/os-release | grep -E "^(PRETTY_NAME|NAME|VERSION_ID|VERSION|ID|HOME_URL|SUPPORT_URL|BUG_REPORT_URL)=")
-    printf "OS Release Information \n";
-    printf "PRETTY_NAME    = %s\n" "${PRETTY_NAME}"
-    printf "NAME           = %s\n" "${NAME}"
-    printf "VERSION_ID     = %s\n" "${VERSION_ID}"
-    printf "VERSION        = %s\n" "${VERSION}"
-    printf "ID             = %s\n" "${ID}"
-    printf "HOME_URL       = %s\n" "${HOME_URL}"
-    printf "SUPPORT_URL    = %s\n" "${SUPPORT_URL}"
-    printf "BUG_REPORT_URL = %s\n" "${BUG_REPORT_URL}"
-
+    printf "Additional OS Release Information : \n";
+    printf ">> PRETTY_NAME    = %s\n" "${PRETTY_NAME}"
+    printf ">> NAME           = %s\n" "${NAME}"
+    printf ">> VERSION_ID     = %s\n" "${VERSION_ID}"
+    printf ">> VERSION        = %s\n" "${VERSION}"
+    printf ">> ID             = %s\n" "${ID}"
+    printf ">> HOME_URL       = %s\n" "${HOME_URL}"
+    printf ">> SUPPORT_URL    = %s\n" "${SUPPORT_URL}"
+    printf ">> BUG_REPORT_URL = %s\n" "${BUG_REPORT_URL}"
+    printf "\n"
 }

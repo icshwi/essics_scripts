@@ -44,3 +44,5 @@ print_summary
 
 
 os_release
+
+printf "\n";
