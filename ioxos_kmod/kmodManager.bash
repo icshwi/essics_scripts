@@ -24,6 +24,7 @@
 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
+declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
 declare -gr SC_DATE="$(date +%Y%m%d-%H%M)"
 
@@ -131,8 +132,8 @@ function put_rules() {
     
     local kmod_name=${1}
     local target_rootfs=${2}
-    put_autoload_conf "${kmon_name}" "${target_rootfs}" ;
-    put_udev_rule "${kmon_name}" "${target_rootfs}";
+    put_autoload_conf "${kmod_name}" "${target_rootfs}" ;
+    put_udev_rule "${kmod_name}" "${target_rootfs}";
     
 }
 
@@ -329,7 +330,7 @@ function show_pci_devices_per_a_vendor () {
 INFO_list+=("SCRPIT      : ${SC_SCRIPT}");
 INFO_list+=("SCRIPT NAME : ${SC_SCRIPTNAME}");
 INFO_list+=("SCRIPT TOP  : ${SC_TOP}");
-INFO_list+=("LOGDATE     : ${SC_LOGDATE}");
+INFO_list+=("LOGDATE     : ${SC_DATE}");
 
 DO="$1"
 
@@ -402,22 +403,23 @@ case "$DO" in
     *) 	
 	echo "">&2         
 	echo "usage: $0 <arg>">&2 
-	echo ""
+	echo "">&2
         echo "          <arg> : info">&2 
-	echo ""
+	echo "">&2
 	echo "          show  : show the found boards information ">&2
-	echo ""
-	echo "          mrf          : ">&2
-	echo "          mrf_cc       : ">&2
-	echo "          mrf_ifc1410  : ">&2
-	echo ""
-	echo "          tsc          : ">&2
-	echo "          tsc_cc       : ">&2
-	echo "          tsc_ifc1410  : ">&2
-	echo ""
-	echo "          sis          : ">&2
-	echo "          sis_cc       : ">&2
-	echo "          sis_ifc1410  : ">&2
+	echo "">&2
+	echo "          mrf          :  OK ">&2
+	echo "          mrf_cc       :  NOT tested">&2
+	echo "          mrf_ifc1410  :  OK ">&2
+	echo "">&2
+	echo "          tsc          :  NOK ">&2
+	echo "          tsc_cc       :  NOT tested">&2
+	echo "          tsc_ifc1410  :  OK  : COMPILE / Autoload / udev - not defined">&2
+	echo "                       :  NOK : modprobe ">&2
+        echo "">&2
+	echo "          sis          :  OK ">&2
+	echo "          sis_cc       :  NOT tested">&2
+	echo "          sis_ifc1410  :  NOK - replace makefile">&2
     	echo "">&2 	
 	exit 0         
 	;; 

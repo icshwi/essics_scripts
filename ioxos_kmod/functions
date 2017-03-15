@@ -63,14 +63,14 @@ function git_clone() {
     local git_src_name=$3;
     local tag_name=$4;
     
-    __checkstr ${SC_LOGDATE};
+    __checkstr ${SC_DATE};
     
     if [[ ! -d ${git_src_dir} ]]; then
 	printf "No git source repository in the expected location %s\n" "${git_src_dir}";
     else
 	printf "Old git source repository in the expected location %s\n" "${git_src_dir}";
-	printf "The old one is renamed to %s_%s\n" "${git_src_dir}" "${SC_LOGDATE}";
-	mv  ${git_src_dir} ${git_src_dir}_${SC_LOGDATE}
+	printf "The old one is renamed to %s_%s\n" "${git_src_dir}" "${SC_DATE}";
+	mv  ${git_src_dir} ${git_src_dir}_${SC_DATE}
     fi
     
     # Always fresh cloning ..... in order to workaround any local 

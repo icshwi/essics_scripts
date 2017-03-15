@@ -43,7 +43,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 
-alias mv='mv -i'
+#alias mv='mv -i'
 alias cp='cp -i'
 
 alias watchtime='watch --interval 1 date'
