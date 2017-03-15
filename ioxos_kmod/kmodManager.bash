@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #  Copyright (c) 2017 - Present  Jeong Han Lee
-#  Copyright (c) 2017 - Present European Spallation Source ERIC
+#  Copyright (c) 2017 - Present  European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 # Author : Jeong Han Lee
 # email  : jeonghan.lee@gmail.com
 # Date   : 
-# version : 0.0.1
+# version : 0.0.2
 #
 
 
@@ -316,6 +316,16 @@ function git_compile_on_ifc1410(){
     __end_func ${func_name};
 }
 
+function modules_prepare() {
+    
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+
+    pushd ${IFC1410_KERNELDIR}
+    make ${TARGET_KERNEL_DEFCONFIG} modules_prepare
+    popd
+    
+    __end_func ${func_name};
+}
 
 
 function show_pci_devices_per_a_vendor () {
@@ -326,6 +336,18 @@ function show_pci_devices_per_a_vendor () {
     printf "\n";
 }
 
+
+function install_kmodManager_on_ifc1410() {
+
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+    local target_rootfs_home=${TARGET_ROOTFS}/home/root
+    local re_name=${REPO_NAME}
+    
+    rm -rf ${target_rootfs_home}/${repo_name}
+    scp -r ${SC_TOP}/../../${repo_name} ${target_rootfs_src}
+    
+    __end_func ${func_name};
+}
 
 INFO_list+=("SCRPIT      : ${SC_SCRIPT}");
 INFO_list+=("SCRIPT NAME : ${SC_SCRIPTNAME}");
@@ -400,13 +422,23 @@ case "$DO" in
 	show_pci_devices_per_a_vendor ${PCI_VENDOR_ID_SIS}
 	show_pci_devices_per_a_vendor ${PCI_VENDOR_ID_IOX}
 	;;
+    mod_prepare)
+	modules_prepare
+	;;
+    install_me)
+	install_kmodManager_on_ifc1410
+	;;
     *) 	
 	echo "">&2         
 	echo "usage: $0 <arg>">&2 
 	echo "">&2
-        echo "          <arg> : info">&2 
+        echo "          <arg>        : info">&2 
 	echo "">&2
-	echo "          show  : show the found boards information ">&2
+	echo "          install_me   :  Install ${REPO_NAME} into ${TARGET_ROOTFS}. ">&2
+	echo "          show         :  Show the found boards information ">&2
+	echo "">&2
+	echo "          mod_prepare  :  One time, if the fresh rootfs is used. ">&2
+
 	echo "">&2
 	echo "          mrf          :  OK ">&2
 	echo "          mrf_cc       :  NOT tested">&2
@@ -414,12 +446,13 @@ case "$DO" in
 	echo "">&2
 	echo "          tsc          :  NOK ">&2
 	echo "          tsc_cc       :  NOT tested">&2
-	echo "          tsc_ifc1410  :  OK  : COMPILE / Autoload / udev - not defined">&2
+	echo "          tsc_ifc1410  :  OK  : COMPILE / kmod autoload conf">&2
+	echo "                       :      : no use udev">&2
 	echo "                       :  NOK : modprobe ">&2
         echo "">&2
 	echo "          sis          :  OK ">&2
 	echo "          sis_cc       :  NOT tested">&2
-	echo "          sis_ifc1410  :  NOK - replace makefile">&2
+	echo "          sis_ifc1410  :  NOK - shoud replace makefile">&2
     	echo "">&2 	
 	exit 0         
 	;; 
