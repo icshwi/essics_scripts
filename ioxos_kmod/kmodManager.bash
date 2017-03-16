@@ -74,8 +74,8 @@ function put_autoload_conf(){
     local kmod_name=${1}
     local target_rootfs=${2}
     local rule=${kmod_name}
-    local target="${module_load_dir}/${kmod_name}.conf";
     local module_load_dir="${target_rootfs}/etc/modules-load.d";
+    local target="${module_load_dir}/${kmod_name}.conf";
     
     local isDir=$(checkIfDir ${module_load_dir})
     if [[ $isDir -eq "$NON_EXIST" ]]; then
@@ -340,11 +340,14 @@ function show_pci_devices_per_a_vendor () {
 function install_kmodManager_on_ifc1410() {
 
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
-    local target_rootfs_home=${TARGET_ROOTFS}/home/root
-    local re_name=${REPO_NAME}
-    
-    rm -rf ${target_rootfs_home}/${repo_name}
-    scp -r ${SC_TOP}/../../${repo_name} ${target_rootfs_src}
+    local target_rootfs_home=${TARGET_ROOTFS}/home/root/ics_gitsrc
+    local rep_name=${REPO_NAME}
+
+#	echo ${target_rootfs_home}/${rep_name}    
+    printf ".... Removing the existent %s\n\n" "${target_rootfs_home}/${rep_name}"
+    rm -rf ${target_rootfs_home}/${rep_name}
+    printf ".... Installing %s to %s\n\n" "${rep_name}" "${target_rootfs_home}"
+    scp -rv ${SC_TOP}/../../${rep_name} ${target_rootfs_home}
     
     __end_func ${func_name};
 }
