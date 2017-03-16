@@ -267,6 +267,61 @@ function git_cross_compile(){
 
 
 
+
+function git_clone_for_ifc1410(){
+
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+
+    local kmod_name=${1}
+    local git_src_name=""
+    local git_src_dir=""
+    local git_src_url=""
+    local git_tag_name=""
+    local git_hash=""
+    local kmod_src_dir=""
+    local git_commands=""
+    
+ 
+    case "$kmod_name" in     
+	${MRF_KMOD_NAME})
+	    git_src_name="${MRF_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    git_src_url="${MRF_GIT_SRC_URL}"
+	    git_tag_name="${MRF_GIT_TAG_NAME}"
+	    git_hash="${MRF_GIT_HASH}"
+	    kmod_src_dir="${git_src_dir}/${MRF_KERNEL_DIR}"
+	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
+	    pushd ${git_src_dir}
+	    git checkout "${GIT_HASH}"
+	    popd
+	    ;;
+	${SIS_KMOD_NAME})
+	    git_src_name="${SIS_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    git_src_url="${SIS_GIT_SRC_URL}"
+	    git_tag_name="${SIS_GIT_TAG_NAME}"
+	    kmod_src_dir="${git_src_dir}/${SIS_KERNEL_DIR}"
+	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
+	    ;;
+	# TSC triggers PON and SFLASE also. 
+	${TOSCA_TSC_KMOD_NAME})
+	    git_src_name="${TOSCA_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    git_src_url="${TOSCA_GIT_SRC_URL}"
+	    git_tag_name="${TOSCA_GIT_TAG_NAME}"
+	    kmod_src_dir="${git_src_dir}/${TOSCA_TSC_KERNEL_DIR}"
+	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
+	    ;;
+	*)
+	    printf "Don't support! \n";
+	    ;;
+    esac
+
+    __end_func ${func_name};
+}
+
+
+
 # arg1 : KMOD NAME
 # git sources should be downloaded in the host, be copied to rootfs under this
 # repositries. 
@@ -428,6 +483,11 @@ case "$DO" in
     mod_prepare)
 	modules_prepare
 	;;
+    git_src)
+	git_clone_for_ifc1410 ${MRF_KMOD_NAME}
+	git_clone_for_ifc1410 ${TOSCA_TSC_KMOD_NAME}
+	#       git_clone_for_ifc1410 ${SIS_KMOD_NAME}
+	;;
     install_me)
 	install_kmodManager_on_ifc1410
 	;;
@@ -435,9 +495,11 @@ case "$DO" in
 	echo "">&2         
 	echo "usage: $0 <arg>">&2 
 	echo "">&2
-        echo "          <arg>        : info">&2 
+        echo "          <arg>        :  info">&2 
 	echo "">&2
+	echo "          git_src      :  Download souces. ">&2
 	echo "          install_me   :  Install ${REPO_NAME} into ${TARGET_ROOTFS}. ">&2
+	echo "">&2
 	echo "          show         :  Show the found boards information ">&2
 	echo "">&2
 	echo "          mod_prepare  :  One time, if the fresh rootfs is used. ">&2
@@ -452,10 +514,10 @@ case "$DO" in
 	echo "          tsc_ifc1410  :  OK  : COMPILE / kmod autoload conf">&2
 	echo "                       :      : no use udev">&2
 	echo "                       :  NOK : modprobe ">&2
-        echo "">&2
-	echo "          sis          :  OK ">&2
-	echo "          sis_cc       :  NOT tested">&2
-	echo "          sis_ifc1410  :  NOK - shoud replace makefile">&2
+        # echo "">&2
+	# echo "          sis          :  OK ">&2
+	# echo "          sis_cc       :  NOT tested">&2
+	# echo "          sis_ifc1410  :  NOK - shoud replace makefile">&2
     	echo "">&2 	
 	exit 0         
 	;; 
