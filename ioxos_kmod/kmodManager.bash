@@ -19,7 +19,7 @@
 # Author : Jeong Han Lee
 # email  : jeonghan.lee@gmail.com
 # Date   : 
-# version : 0.0.2
+# version : 0.0.3
 #
 
 
@@ -56,7 +56,10 @@ function modprobe_kmod(){
     
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
     local kmod_name=${1}
-    
+    #
+    # Update kernel module....manually
+    #
+    ${SUDO_CMD} depmod --quick
     ${SUDO_CMD} modprobe -r ${kmod_name};
     ${SUDO_CMD} modprobe ${kmod_name};
 
