@@ -34,4 +34,14 @@ $ ./kmodManager tsc_ifc1410
 
 ```
 
+## ntp is needed!!
+
+```
+make[2]: warning:  Clock skew detected.  Your build may be incomplete.
+
+
+ntpdate 10.0.7.53 
+16 Mar 00:42:24 ntpdate[3255]: adjust time server 10.0.7.53 offset 0.318090 sec
+```
+
 

@@ -403,9 +403,9 @@ function install_kmodManager_on_ifc1410() {
 
 #	echo ${target_rootfs_home}/${rep_name}    
     printf ".... Removing the existent %s\n\n" "${target_rootfs_home}/${rep_name}"
-    rm -rf ${target_rootfs_home}/${rep_name}
+    ${SUDO_CMD} rm -rf ${target_rootfs_home}/${rep_name}
     printf ".... Installing %s to %s\n\n" "${rep_name}" "${target_rootfs_home}"
-    scp -rv ${SC_TOP}/../../${rep_name} ${target_rootfs_home}
+    ${SUDO_CMD} scp -rv ${SC_TOP}/../../${rep_name} ${target_rootfs_home}
     
     __end_func ${func_name};
 }
@@ -473,7 +473,9 @@ case "$DO" in
     tsc_ifc1410)
 	git_compile_on_ifc1410 ${TOSCA_TSC_KMOD_NAME};
 	modprobe_kmod ${TOSCA_TSC_KMOD_NAME};
-	put_rules ${TOSCA_TSC_KMOD_NAME};
+	put_rules     ${TOSCA_TSC_KMOD_NAME};
+        modprobe_kmod ${TOSCA_PON_KMOD_NAME};
+        put_rules     ${TOSCA_PON_KMOD_NAME};
 	modprobe_kmod ${TOSCA_SFL_KMOD_NAME};
 	put_rules     ${TOSCA_SFL_KMOD_NAME};
 	print_info ;
@@ -494,6 +496,9 @@ case "$DO" in
     install_me)
 	install_kmodManager_on_ifc1410
 	;;
+    ntpdate)
+	ntpdate 10.0.7.53 
+	;;
     *) 	
 	echo "">&2         
 	echo "usage: $0 <arg>">&2 
@@ -502,6 +507,7 @@ case "$DO" in
 	echo "">&2
 	echo "          git_src      :  Download souces. ">&2
 	echo "          install_me   :  Install ${REPO_NAME} into ${TARGET_ROOTFS}. ">&2
+        echo "          ntpdate      :  time sync with host">&2
 	echo "">&2
 	echo "          show         :  Show the found boards information ">&2
 	echo "">&2
