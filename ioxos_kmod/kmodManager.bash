@@ -325,6 +325,51 @@ function git_clone_for_ifc1410(){
 
 
 
+function git_clean_for_ifc1410(){
+
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+
+    local kmod_name=${1}
+    local git_src_name=""
+    local git_src_dir=""
+    local git_src_url=""
+    local git_tag_name=""
+    local git_hash=""
+    local kmod_src_dir=""
+    local git_commands=""
+    
+ 
+    case "$kmod_name" in     
+	${MRF_KMOD_NAME})
+	    git_src_name="${MRF_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    ;;
+	${SIS_KMOD_NAME})
+	    git_src_name="${SIS_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    ;;
+	# TSC triggers PON and SFLASE also. 
+	${TOSCA_TSC_KMOD_NAME})
+	    git_src_name="${TOSCA_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    ;;
+	*)
+	    printf "Don't support! \n";
+	    ;;
+    esac
+
+    # make a backup dir at least, so overwrite them again and again
+    # mv ${git_src_dir} ${git_src_dir}_bak
+    printf "Removing %s .....\n" "${git_src_dir}"
+    rm -rf ${git_src_dir}
+
+    __end_func ${func_name};
+}
+
+
+
+
+
 # arg1 : KMOD NAME
 # git sources should be downloaded in the host, be copied to rootfs under this
 # repositries. 
@@ -410,6 +455,19 @@ function install_kmodManager_on_ifc1410() {
     __end_func ${func_name};
 }
 
+
+function git_src_all() {
+    git_clone_for_ifc1410 ${MRF_KMOD_NAME}
+    git_clone_for_ifc1410 ${TOSCA_TSC_KMOD_NAME}
+    #       git_clone_for_ifc1410 ${SIS_KMOD_NAME}
+}
+
+function git_clr_all() {
+    git_clean_for_ifc1410 ${MRF_KMOD_NAME}
+    git_clean_for_ifc1410 ${TOSCA_TSC_KMOD_NAME}
+    #       git_clean_for_ifc1410 ${SIS_KMOD_NAME}
+}
+
 INFO_list+=("SCRPIT      : ${SC_SCRIPT}");
 INFO_list+=("SCRIPT NAME : ${SC_SCRIPTNAME}");
 INFO_list+=("SCRIPT TOP  : ${SC_TOP}");
@@ -489,9 +547,11 @@ case "$DO" in
 	modules_prepare
 	;;
     git_src)
-	git_clone_for_ifc1410 ${MRF_KMOD_NAME}
-	git_clone_for_ifc1410 ${TOSCA_TSC_KMOD_NAME}
-	#       git_clone_for_ifc1410 ${SIS_KMOD_NAME}
+	git_clr_all
+	git_src_all
+	;;
+    git_clr)
+	git_clr_all
 	;;
     install_me)
 	install_kmodManager_on_ifc1410
@@ -505,7 +565,8 @@ case "$DO" in
 	echo "">&2
         echo "          <arg>        :  info">&2 
 	echo "">&2
-	echo "          git_src      :  Download souces. ">&2
+	echo "          git_src      :  Download sources locally. ">&2
+	echo "          git_clr      :  Remove   local souce dirs. ">&2
 	echo "          install_me   :  Install ${REPO_NAME} into ${TARGET_ROOTFS}. ">&2
         echo "          ntpdate      :  time sync with host">&2
 	echo "">&2
