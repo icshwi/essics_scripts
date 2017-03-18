@@ -1,18 +1,9 @@
-#
 # This is the unofficial configuration file for iocuser of ICS at ESS
 #
 #  Author  : Jeong Han Lee
 #  email   : han.lee@esss.se
-#  Date    : 2016-10-25
-#  version : 0.0.1
-
-#
-# This is the unofficial configuration file for iocuser of ICS at ESS
-#
-#  Author  : Jeong Han Lee
-#  email   : han.lee@esss.se
-#  Date    : 2016-10-25
-#  version : 0.0.1
+#  Date    : 2017-03-18
+#  version : 0.0.2
 
 startup_message         off
 vbell                   off
