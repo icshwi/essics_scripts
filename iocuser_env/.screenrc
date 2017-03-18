@@ -6,12 +6,18 @@
 #  Date    : 2016-10-25
 #  version : 0.0.1
 
+#
+# This is the unofficial configuration file for iocuser of ICS at ESS
+#
+#  Author  : Jeong Han Lee
+#  email   : han.lee@esss.se
+#  Date    : 2016-10-25
+#  version : 0.0.1
+
 startup_message         off
 vbell                   off
 termcapinfo rxvt-unicode 'hs:ts=\E]2;:fs=\007:ds=\E]2;SSSscreen\007'
-terminfo    rxvt-unicode ti@:te@:
-term        screen
-
+termcapinfo xterm* ti@:te@
 
 defscrollback 100000
 autodetach on
@@ -30,3 +36,4 @@ altscreen on
 chdir $HOME
 screen -fn -t "$HOST-$HOME" 
 select 0
+

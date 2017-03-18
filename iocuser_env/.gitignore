@@ -6,3 +6,4 @@
 \#.*\#
 ssh-key*
 known_hosts*
+builddir*
