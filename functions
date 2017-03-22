@@ -1,7 +1,7 @@
 # -*- mode: sh -*-
 #
 #  Copyright (c) 2016 Jeong Han Lee
-#  Copyright (c) 2016 European Spallation Source ERIC
+#  Copyright (c) 2016 - Present European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -19,7 +19,7 @@
 #  Author  : Jeong Han Lee
 #  Email   : han.lee@esss.se
 #  Date    : 
-#  Version : 0.0.2
+#  Version : 0.0.3
 
 
 function get_kernel_version() {
@@ -60,11 +60,11 @@ function print_yum_repos() {
     ls -l ${YUM_REPOSD_PATH}
 }
 
-function find_mrf_rule() {
+function find_kmod_rule() {
 
     local rule=$1;
     if [[ ! -f ${rule} ]]; then
-	printf ">> %s doesn't exist. Maybe this system doens't have any EVENT system\n" "${rule}";
+	printf ">> %s doesn't exist. Maybe this system doens't it\n" "${rule}";
     else
 	printf ">> %s was found. \n" "${rule}"
 	printf "   ${rule} contains \n"
@@ -83,8 +83,27 @@ function print_mrf_env() {
     modinfo mrf ;
     printf "\n"
 
-    find_mrf_rule ${MRF_KMOD_CONF}
-    find_mrf_rule ${MRF_UDEV_RULES}
+    find_kmod_rule ${MRF_KMOD_CONF}
+    find_kmod_rule ${MRF_UDEV_RULES}
+    
+}
+
+
+
+function print_ioxos_env() {
+
+    printf "\n"
+    printf "IOXOS ENV :\n";
+    printf ">> modinfo %s \n" "SFLASH" ;
+    modinfo sflash ;
+    printf "\n"
+
+    printf ">> modinfo %s \n" "TSC" ;
+    modinfo tsc ;
+    printf "\n"
+
+    find_kmod_rule ${IOXOS_TSC_KMOD_CONF}
+    find_kmod_rule ${IOXOS_SFLASH_LMOD_CONF}
     
 }
 
@@ -95,10 +114,14 @@ function print_pccid_env() {
     printf "MRF HW: \n";
     printf ">>  "
     find_in_lspci ${MRF_PCIID}
-    printf "\n"
+    printf "\n\n"
     printf "STRUCK HW: \n";
     printf ">>  "
     find_in_lspci ${STRUCK_PCIID}
+    printf "\n\n"
+    printf "IOxOS : \n";
+    printf ">>  "
+    find_in_lspci ${IOXOS_PCIID}
     printf "\n"
 }
 
@@ -115,7 +138,9 @@ function print_summary() {
     print_eee_env
     print_yum_repos
     print_mrf_env
+    print_ioxos_env
     print_pccid_env
+
 
     printf "\n";
 }
