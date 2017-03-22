@@ -1,0 +1,7 @@
+
+```
+icssev@icslab-ser02: ~$ cd -
+/home/icssev/bin
+icssev@icslab-ser02: bin$ ln -s ../ics_gitsrc/essics_scripts/bin_scripts/tag_clean.sh git_tag_clean
+icssev@icslab-ser02: bin$ ln -s ../ics_gitsrc/essics_scripts/bin_scripts/tag_add.sh git_tag_add
+```
