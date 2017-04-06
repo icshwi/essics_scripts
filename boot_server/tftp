@@ -1,10 +1,3 @@
-# server_args
-# -4 : ipv4 only
-# -p : Perform no additional permissions checks above the normal system-provided access controls for the user specified via the --user option.
-# -s : Change root directory on startup. This means the remote host does not need to pass along the directory as part of the transfer, and may add security. 
-#      When --secure is specified, exactly one directory should be specified on the command line. The use of this option is recommended for security as well as 
-#      compatibility with some boot ROMs which cannot be easily made to include a directory name in its request.
-# -vv :  Increase the logging verbosity of tftpd. This flag can be specified multiple times for even higher verbosity.
 # /etc/xinetd.d/tftp
 service tftp
 {
