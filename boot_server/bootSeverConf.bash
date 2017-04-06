@@ -209,7 +209,12 @@ function toolchain_conf() {
 }
 
 
+function uboot-tools_conf() {
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+    http://git.denx.de/u-boot.git
 
+    __end_func ${func_name};
+}
 
 
 
