@@ -17,7 +17,7 @@
 #
 # Author : Jeong Han Lee
 # email  : han.lee@esss.se
-# Date   : 
+# Date   : Tuesday, April 18 10:40:46 CEST 2017
 # version : 0.0.1
 
 
@@ -25,7 +25,7 @@
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
-declare -gr SC_DATE="$(date +%Y%m%d-%H%M)"
+declare -gr SC_LOGDATE="$(date +%Y%m%d-%H%M)"
 declare -gr SUDO_CMD="sudo"
 
 
@@ -101,6 +101,8 @@ function preparation_centos() {
     package_list+=" ";
     package_list+="nfs-utils"
     package_list+=" ";
+    package_list+="kernel-headers kernel-devel"
+    package_list+=" ";
     
     ${SUDO_CMD} yum -y install ${package_list};
     
@@ -143,7 +145,9 @@ function preparation_debian() {
     package_list+=" ";
     package_list+="nfs-utils"
     package_list+=" ";
-    
+    package_list+="kernel-devel"
+    package_list+=" ";
+
     ${SUDO_CMD} apt-get -y install ${package_list};
     
     __end_func ${func_name};
@@ -175,43 +179,77 @@ function tftp_server_conf(){
 
 
 function nfs_server_conf() {
+
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
- 
     local exports_path="/etc/"
 
-  ## The following lines should be replaced with 
+    ## The following lines should be replaced with 
     local pkg_tgz_path="${HOME}/serverpkgs/"
   
     ${SUDO_CMD} tar xvzf ${pkg_tgz_path}/boot.tgz -C /export/
     ${SUDO_CMD} tar xvzf ${pkg_tgz_path}/images.tgz -C /export/
     ${SUDO_CMD} tar xvzf ${pkg_tgz_path}/nfsroot.tgz -C /export/
-
+    
     
     ${SUDO_CMD} install -m 644 ${SC_TOP}/exports   ${exports_path}
-
+    
     ${SUDO_CMD} systemctl restart nfs
-
 
     __end_func ${func_name};
 }
+
 
 function toolchain_conf() {
 
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
     local toolchain_name="fsl-qoriq_1.9.tgz"
-
-  ## The following lines should be replaced with 
+    
+    ## The following lines should be replaced with 
     local pkg_tgz_path="${HOME}/serverpkgs/"
-
+    
     ${SUDO_CMD} tar xvzf ${pkg_tgz_path}/${toolchain_name} -C /opt/
 
     __end_func ${func_name};
 }
 
 
-function uboot-tools_conf() {
+
+# couldn't find a way to compile the uboot-tools
+# install uboot-tools-2001.03-1.el6.x86_64.rpm by hand
+# 
+
+function uboot_tools_conf () {
+
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
-    http://git.denx.de/u-boot.git
+    
+    # http:// should have the / after domain
+    # git:.// should not have the / after domain
+    
+    local git_src_url="git://git.denx.de"
+    local git_src_name="u-boot.git"
+    local git_src_dir=${SC_TOP}/${git_src_name};
+    local git_src_tag="v2017.03";
+    
+    printf "\n>>>"
+    printf "\n>>> Now, we are going to clone and build %s \n" "${git_src_name}"
+    
+
+    git_clone  "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_src_tag}";
+    
+    # pushd ${git_src_dir};
+    # ls
+    # popd
+
+    # pushd ${git_src_dir}/unix;
+    # make -f Makefile.gtk
+    # #
+    # # mv only putty binary to /usr/local/bin directory manually.
+    # # and overwrite an existing file
+
+    # printf "\n>>>"
+    # printf "\n>>> Now, we are moving the putty to /usr/local/bin manually\n"
+    # ${SUDO_CMD} mv --force putty /usr/local/bin/ 
+    # popd
 
     __end_func ${func_name};
 }
@@ -231,6 +269,9 @@ case "$1" in
     toolchain)
 	toolchain_conf;
 	;;
+    # uboot)
+    # 	uboot_tools_conf;
+    # 	;;
     all)
 	preparation_centos;
 	tftp_server_conf;
