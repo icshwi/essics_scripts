@@ -17,8 +17,8 @@
 #
 # Author : Jeong Han Lee
 # email  : han.lee@esss.se
-# Date   : Tuesday, April 18 10:40:46 CEST 2017
-# version : 0.0.1
+# Date   : Thursday, June  8 09:40:43 CEST 2017
+# version : 0.0.2
 
 
 
@@ -66,7 +66,10 @@ function __system_ctl_stop_disable(){
     __end_func ${func_name};
 }
 
-
+#  Stop and disable packagekit and firewalld services
+#  Remove packagekit
+#  Disable SELINUX (reboot is needed)
+#  Install minimal packages
 
 function preparation_centos() {
     
@@ -77,7 +80,7 @@ function preparation_centos() {
     __system_ctl_stop_disable "firewalld"
     
     declare -r yum_pid="/var/run/yum.pid"
-
+    
     # Somehow, yum is running due to PackageKit, so if so, kill it
     #
     if [[ -e ${yum_pid} ]]; then
@@ -92,6 +95,11 @@ function preparation_centos() {
     #
     ${SUDO_CMD} yum -y remove PackageKit ;
 
+
+    declare -r selinux_conf="/etc/sysconfig/selinux"
+
+    ${SUDO_CMD} sed -i~ 's/^SELINUX=.*/SELINUX=disabled/g' ${selinux_conf}
+   
 
     declare -a package_list=();
 
@@ -111,6 +119,7 @@ function preparation_centos() {
 
 
 
+# not working, but a place holder for...
 
 # install package
 function preparation_debian() {
