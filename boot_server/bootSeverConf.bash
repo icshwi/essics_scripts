@@ -78,6 +78,7 @@ function preparation_centos() {
 
     __system_ctl_stop_disable "packagekit"
     __system_ctl_stop_disable "firewalld"
+    __system_ctl_stop_disable "iptables"
     
     declare -r yum_pid="/var/run/yum.pid"
     
@@ -93,14 +94,16 @@ function preparation_centos() {
     
     # Remove PackageKit
     #
-    ${SUDO_CMD} yum -y remove PackageKit ;
+    ${SUDO_CMD} yum -y remove PackageKit firewalld;
 
-
-    declare -r selinux_conf="/etc/sysconfig/selinux"
-
-    ${SUDO_CMD} sed -i~ 's/^SELINUX=.*/SELINUX=disabled/g' ${selinux_conf}
-   
-
+    local selinux_status=$(/usr/sbin/getenforce)
+    local isVar=""
+    isVar=$(compare_strs "$selinux_status" "Enforcing")
+    if [[ $isVar -eq "$EXIST" ]]; then
+	
+	local selinux_conf="/etc/sysconfig/selinux"
+	${SUDO_CMD} sed -i~ 's/^SELINUX=.*/SELINUX=disabled/g' ${selinux_conf}
+    fi
     declare -a package_list=();
 
     package_list+="tftp-server tftp"
@@ -113,7 +116,12 @@ function preparation_centos() {
     package_list+=" ";
     
     ${SUDO_CMD} yum -y install ${package_list};
-    
+
+
+    if [[ $isVar -eq "$EXIST" ]]; then
+	echo "Please reboot your system!"
+    fi
+   
     __end_func ${func_name};
 }
 

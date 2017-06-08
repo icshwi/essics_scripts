@@ -18,9 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  Email   : jeonghan.lee@gmail.com
-
-#  Date    : Thursday, March 30 13:55:51 CEST 2017
-#  Version : 0.0.5
+#  Date    : Saturday, June  3 00:01:51 CEST 2017
+#  Version : 0.0.6
 
 
 ROOT_UID=0 
@@ -294,3 +293,37 @@ function command_exists() {
 }
 
 
+
+
+function execute_cmd() {
+    local cmd=$1
+    local isVar=$(checkIfVar ${cmd})
+    local cmd_proc=0
+    
+    if [[ $isVar -eq "$NON_EXIST" ]]; then
+	echo "Any input command is needed!"
+    fi
+#    echo $cmd
+    eval $cmd 
+#    cmd_proc=$!
+#    wait "$cmd_proc"
+    echo ""
+}
+
+
+function compare_strs() {
+   
+    local str1=$1
+    local str2=$2
+    local result=""
+    
+    if [ "$str1" = "$str2" ]
+    then
+	# yes, it is the same, 
+	result=$EXIST
+    else
+        # no
+	result=$NON_EXIST
+    fi
+    echo "${result}"	
+}
