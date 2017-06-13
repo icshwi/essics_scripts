@@ -56,3 +56,9 @@ sudo /usr/sbin/dmidecode -t system  -t chassis
 # Maybe we also need the ethernet port numbers or others..
 
 # sudo /usr/sbin/dmidecode -t system  -t chassis -t baseboard -t processor
+
+
+printf "\n";
+printf "List of PCI devices :\n";
+
+lspci -nmn
