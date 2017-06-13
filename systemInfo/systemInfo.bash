@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (c) 2016 European Spallation Source ERIC
+#  Copyright (c) 2016 - Present European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
 #  it and/or modify it under the terms of the GNU General Public License
@@ -18,8 +18,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : Monday, January 30 12:03:35 CET 2017
-#   version : 0.0.1
+#   date    : Tuesday, June 13 12:24:48 CEST 2017
+#   version : 0.0.2
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
@@ -34,11 +34,12 @@ set +a
 
 . ${SC_TOP}/functions
 
+
 get_kernel_version
 get_centos_version
 get_css_version
 get_java_version
-
+get_system_vendor
 
 print_summary
 
@@ -46,3 +47,13 @@ print_summary
 os_release
 
 printf "\n";
+
+
+printf "\n";
+printf "Hardware Vendor Information :\n";
+
+# Currently, we only need to know system and chassis vendor and ...
+sudo /usr/sbin/dmidecode -t system  -t chassis
+# Maybe we also need the ethernet port numbers or others..
+
+# sudo /usr/sbin/dmidecode -t system  -t chassis -t baseboard -t processor
