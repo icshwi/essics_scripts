@@ -39,7 +39,6 @@ get_kernel_version
 get_centos_version
 get_css_version
 get_java_version
-get_system_vendor
 
 print_summary
 
