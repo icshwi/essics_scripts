@@ -1,0 +1,14 @@
+Host *
+ForwardX11 yes
+ForwardAgent yes
+VisualHostKey yes
+PermitLocalCommand yes
+#IdentityFile ~/.ssh/ssh-key-example
+Compression yes
+CompressionLevel 6
+ServerAliveInterval 200
+ 
+Host icslab-ecat01
+     Hostname 10.4.8.11
+     User iocuser
+

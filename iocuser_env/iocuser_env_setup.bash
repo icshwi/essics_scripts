@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  Copyright (c) Jeong Han Lee
+#  Copyright (c) 2016 - Present Jeong Han Lee
 #  Copyright (c) 2016 European Spallation Source ERIC
 
 #  This shell script is free software: you can redistribute
@@ -18,8 +18,8 @@
 #
 # Author : Jeong Han Lee
 # email  : han.lee@esss.se
-# Date   : Tuesday, October 25 17:42:19 CEST 2016
-# version : 0.0.1
+# Date   : Tuesday, August 22 15:11:42 CEST 2017
+# version : 0.0.2
 
 set -efo pipefail
 
@@ -39,6 +39,10 @@ declare -gr GIT_PROMPT="git-prompt.sh";
 declare -gr GIT_COMPET="git-completion.bash";
 declare -gr EMACS_EPICS_MODE="epics-mode.el";
 declare -gr EMACS_D=".emacs.d";
+
+declare -gr SSH_D=".ssh";
+declare -gr SSH_CONF_FILE="config";
+
 
 # Generic : Redefine pushd and popd to reduce their output messages
 # 
@@ -80,6 +84,48 @@ function make_epics_mode() {
     end_func ${func_name}; 
 }
 
+
+
+function make_install_epics_mode() {
+
+    local func_name=${FUNCNAME[*]}; ini_func ${func_name};
+    printf "Setup the EPICS mode for emacs\n";
+    printf "Create Sym link %s" "${HOME}/${EMACS_D}/${EMACS_EPICS_MODE}" ;
+
+    mkdir -p ${HOME}/${EMACS_D};
+    scp -r  ${SC_TOP}/${EMACS_EPICS_MODE} ${HOME}/${EMACS_D}/${EMACS_EPICS_MODE};
+
+    end_func ${func_name}; 
+}
+
+
+function make_ssh_mode() {
+
+    local func_name=${FUNCNAME[*]}; ini_func ${func_name};
+    printf "Setup the SSH configuration\n";
+    printf "Create Sym link %s" "${HOME}/${SSH_D}/${SSH_CONF_FILE}" ;
+
+    mkdir -p ${HOME}/${SSH_D};
+    ln -sf  ${SC_TOP}/${SSH_CONF_FILE} ${HOME}/${SSH_D}/${SSH_CONF_FILE};
+
+    end_func ${func_name}; 
+}
+
+
+function make_install_ssh_mode() {
+
+    local func_name=${FUNCNAME[*]}; ini_func ${func_name};
+    printf "Setup the SSH configuration\n";
+    printf "Create Sym link %s" "${HOME}/${SSH_D}/${SSH_CONF_FILE}" ;
+
+    mkdir -p ${HOME}/${SSH_D};
+    scp -r  ${SC_TOP}/${SSH_CONF_FILE} ${HOME}/${SSH_D}/${SSH_CONF_FILE};
+
+    end_func ${func_name}; 
+}
+
+
+
 function get_gits() {
 
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
@@ -93,7 +139,6 @@ function get_gits() {
 	${web_site}/${GIT_PROMPT} -o ${git_prompt} \
 	${web_site}/${GIT_COMPET} -o ${git_completion};
     
-
     end_func ${func_name};  
 }
 
@@ -102,9 +147,8 @@ function clean_epics_mode() {
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     local epicsmode=${HOME}/${EMACS_D}/${EMACS_EPICS_MODE};
 
-    printf "Cleaning %s" "${epicsmode}";
-
     if [[ -e ${epicsmode} ]]; then
+	printf "Cleaning %s" "${epicsmode}";
 	rm -f ${epicsmode};
     fi
     end_func ${func_name};  
@@ -113,17 +157,29 @@ function clean_epics_mode() {
 
 
 function clean_cfg() {
-
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     local target_name=${HOME}/.${1};
 
-    printf "Cleaning cfg : %s" "${target_name}";
-
     if [[ -e ${target_name} ]]; then
+	printf "Cleaning cfg : %s" "${target_name}";
 	rm -f ${target_name};
     fi	
     end_func ${func_name};  
 }
+
+
+
+
+function clean_ssh_mode() {
+    local func_name=${FUNCNAME[*]}; ini_func ${func_name};
+    local local_mode=${HOME}/${SSH_D}/${SSH_CONF_FILE};
+   
+    if [[ -e ${local_mode} ]]; then
+	printf "Cleaning %s" "${loca_mode}";
+	rm -f ${local_mode};
+    fi
+    end_func ${func_name};  
+}    
 
 
 function clean_gits() {
@@ -132,13 +188,13 @@ function clean_gits() {
     local git_prompt="${HOME}/.${GIT_PROMPT}";
     local git_completion="${HOME}/.${GIT_COMPET}";
 
-    printf "Cleaing gits : %s %s" "${git_prompt}" "${git_completion}";
-
     if [[ -e ${git_prompt} ]]; then
+	printf "Cleaing gits : %s" "${git_prompt}";
 	rm -f ${git_prompt};
     fi	
 
     if [[ -e ${git_completion} ]]; then
+	printf "Cleaing gits : %s" "${git_completion}";
 	rm -f ${git_completion};
     fi	
 
@@ -158,7 +214,8 @@ DO="$1"
 case "$DO" in
 
     install)
-	make_epics_mode
+	make_install_epics_mode
+	make_install_ssh_mode
 	get_gits
 	
 	for d in $TARGET_LIST
@@ -170,6 +227,7 @@ case "$DO" in
         ;;
     link)
 	make_epics_mode
+	make_ssh_mode
 	get_gits
 	
 	for d in $TARGET_LIST
@@ -180,6 +238,7 @@ case "$DO" in
     
     clean)
 	clean_epics_mode
+	clean_ssh_mode
 	clean_gits
 	for d in $TARGET_LIST
 	do
