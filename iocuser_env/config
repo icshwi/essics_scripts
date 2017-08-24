@@ -12,3 +12,7 @@ Host icslab-ecat01
      Hostname 10.4.8.11
      User iocuser
 
+Host icslab-ecat02
+     Hostname 10.4.8.12
+     User iocuser
+     
