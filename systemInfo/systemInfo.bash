@@ -18,8 +18,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : Tuesday, June 13 12:24:48 CEST 2017
-#   version : 0.0.2
+#   date    : Thursday, August 24 15:23:12 CEST 2017
+#   version : 0.0.3
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
@@ -62,3 +62,9 @@ printf "\n";
 printf "List of PCI devices :\n";
 
 lspci -nmn
+
+
+printf "\n";
+printf "File system usage\n";
+
+df -h
