@@ -47,10 +47,8 @@ function getHostname() {
 }
 
 # Generic : git_clone
-# 1.0.3 Tuesday, November  8 18:13:44 CET 2016
+# 1.0.4 Friday, August 25 11:21:01 CEST 2017
 #
-# Required Global Variable
-# - SC_LOGDATE      : Input
 
 function git_clone() {
     
@@ -60,15 +58,14 @@ function git_clone() {
     local git_src_url=$2;
     local git_src_name=$3;
     local tag_name=$4;
-    
-    __checkstr ${SC_LOGDATE};
+    local log_date=$(date +%Y%m%d-%H%M);
     
     if [[ ! -d ${git_src_dir} ]]; then
 	printf "No git source repository in the expected location %s\n" "${git_src_dir}";
     else
 	printf "Old git source repository in the expected location %s\n" "${git_src_dir}";
-	printf "The old one is renamed to %s_%s\n" "${git_src_dir}" "${SC_LOGDATE}";
-	mv  ${git_src_dir} ${git_src_dir}_${SC_LOGDATE}
+	printf "The old one is renamed to %s_%s\n" "${git_src_dir}" "${log_date}";
+	mv  ${git_src_dir} ${git_src_dir}_${log_date}
     fi
     
     # Always fresh cloning ..... in order to workaround any local 
@@ -82,7 +79,8 @@ function git_clone() {
 	cmd="git clone --recursive -b ${tag_name} --single-branch --depth 1 ${git_src_url}/${git_src_name} ${git_src_dir} "
 
 	echo $cmd
-	exec $cmd
+	$cmd
+	
     fi
 
     __end_func ${func_name};

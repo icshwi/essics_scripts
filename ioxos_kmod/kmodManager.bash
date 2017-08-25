@@ -18,15 +18,13 @@
 #
 # Author : Jeong Han Lee
 # email  : jeonghan.lee@gmail.com
-# Date   : 
-# version : 0.0.3
+# Date   : Friday, August 25 12:32:14 CEST 2017
+# version : 0.0.4
 #
 
-
 declare -gr SC_SCRIPT="$(realpath "$0")"
-declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
+declare -gr SC_SCRIPTNAME=${0##*/}
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
-declare -gr SC_DATE="$(date +%Y%m%d-%H%M)"
 
 
 declare -ag INFO_list=()
@@ -37,7 +35,7 @@ set -a
 . ${SC_TOP}/env.conf
 set +a
 
-. ${SC_TOP}/functions
+. ${SC_TOP}/../functions
 
 
 function print_info() {
@@ -51,17 +49,32 @@ function print_info() {
 
 
 # arg1 : KMOD NAME
-#
+# arg2 : Ethernet Device for EtherCAT
+
 function modprobe_kmod(){
     
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
     local kmod_name=${1}
+
+    local ecat_dev=${2}
+    
+ 
     #
     # Update kernel module....manually
     #
     ${SUDO_CMD} depmod --quick
-    ${SUDO_CMD} modprobe -r ${kmod_name};
-    ${SUDO_CMD} modprobe ${kmod_name};
+    printf "Removing ${kmod_name} ... \n"
+
+    if [ -z "$ecat_dev" ]; then
+	${SUDO_CMD} modprobe -r ${kmod_name};
+	${SUDO_CMD} modprobe -v ${kmod_name};
+    else
+	local mac_address=$(get_macaddr ${ecat_dev});
+	${SUDO_CMD} modprobe -r ${ECAT_KMOD_GENERIC_NAME};
+	${SUDO_CMD} modprobe -r ${kmod_name};
+	${SUDO_CMD} modprobe -v ${kmod_name} main_devices=\"${mac_address}\";
+	${SUDO_CMD} modprobe -v ${ECAT_KMOD_GENERIC_NAME};
+    fi
 
     INFO_list+=("$(modinfo ${kmod_name})");
     INFO_list+=("$(lsmod |grep ${kmod_name})");
@@ -115,6 +128,10 @@ function put_udev_rule(){
 	    rule="KERNEL==\"sis8300-[0-9]*\", NAME=\"%k\", MODE=\"0666\"";
 	    target="${udev_rules_dir}/99-${SIS_KMOD_NAME}.rules";
 	    ;;
+	${ECAT_KMOD_NAME})
+	    rule="KERNEL==\"EtherCAT[0-9]*\", NAME=\"%k\", MODE=\"0666\"";
+	    target="${udev_rules_dir}/99-${ECAT_KMOD_NAME}.rules";
+	    ;;
 	*)
 	    # no rule, but create a dummy file
 	    rule=""
@@ -167,6 +184,7 @@ function git_compile(){
 	    git checkout "${GIT_HASH}"
 	    popd
 	    pushd ${kmod_src_dir}
+	    printf "\n\n\n\n"
 	    ${SUDO_CMD} make modules modules_install clean
 	    popd
 	    ;;
@@ -178,6 +196,7 @@ function git_compile(){
 	    kmod_src_dir="${git_src_dir}/${SIS_KERNEL_DIR}"
 	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
 	    pushd ${kmod_src_dir}
+	    printf "\n\n\n\n"
 	    ${SUDO_CMD} make modules modules_install clean
 	    popd
 	    ;;
@@ -190,10 +209,27 @@ function git_compile(){
 	    kmod_src_dir="${git_src_dir}/${TOSCA_TSC_KERNEL_DIR}"
 	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
 	    pushd ${kmod_src_dir}
+	    printf "\n\n\n\n"
 	    ${SUDO_CMD} make modules modules_install clean
 	    popd
 	    kmod_src_dir="${git_src_dir}/${TOSCA_SFL_KERNEL_DIR}"
 	    pushd ${kmod_src_dir}
+	    printf "\n\n\n\n"
+	    ${SUDO_CMD} make modules modules_install clean
+	    popd
+	    ;;
+	${ECAT_KMOD_NAME})
+	    git_src_url="${ECAT_GIT_SRC_URL}"
+	    git_src_name="${ECAT_GIT_SRC_NAME}"
+	    git_src_dir="${SC_TOP}/${git_src_name}"
+	    git_tag_name="${ECAT_GIT_TAG_NAME}"
+	    kmod_src_dir="${git_src_dir}/${ECAT_KERNEL_DIR}"
+	    git_clone "${git_src_dir}" "${git_src_url}" "${git_src_name}" "${git_tag_name}";
+	    echo ${kmod_src_dir}
+	    pushd ${kmod_src_dir}
+	    autoreconf --force --install -v
+	    ./configure --disable-8139too --enable-generic
+	    printf "\n\n\n\n"
 	    ${SUDO_CMD} make modules modules_install clean
 	    popd
 	    ;;
@@ -474,6 +510,9 @@ INFO_list+=("SCRIPT TOP  : ${SC_TOP}");
 INFO_list+=("LOGDATE     : ${SC_DATE}");
 
 DO="$1"
+ECAT_MASTER_DEV="$2"
+
+
 
 case "$DO" in     
     mrf)
@@ -538,6 +577,18 @@ case "$DO" in
 	put_rules     ${TOSCA_SFL_KMOD_NAME};
 	print_info ;
 	;;
+    ecat)
+	if [ -z "$ECAT_MASTER_DEV" ]; then
+	    
+	    echo "Please define the ethernet device name"
+
+	else
+	    git_compile   ${ECAT_KMOD_NAME};
+	    modprobe_kmod ${ECAT_KMOD_MASTER_NAME}  ${ECAT_MASTER_DEV} ; 
+	    put_rules     ${ECAT_KMOD_NAME};
+	    print_info ;
+	fi
+	;; 
     show)
 	show_pci_devices_per_a_vendor ${PCI_VENDOR_ID_MRF}
 	show_pci_devices_per_a_vendor ${PCI_VENDOR_ID_SIS}
@@ -584,10 +635,13 @@ case "$DO" in
 	echo "          tsc_ifc1410  :  OK  : COMPILE / kmod autoload conf">&2
 	echo "                       :      : no use udev">&2
 	echo "                       :  NOK : modprobe ">&2
-        # echo "">&2
-	# echo "          sis          :  OK ">&2
-	# echo "          sis_cc       :  NOT tested">&2
-	# echo "          sis_ifc1410  :  NOK - shoud replace makefile">&2
+	echo "">&2
+	echo "          ecat  netdev :  OK ">&2
+	echo "    (ex.) ecat  eth0   :     ">&2
+        echo "">&2
+	echo "          sis          :  OK ">&2
+	echo "          sis_cc       :  NOT tested">&2
+	echo "          sis_ifc1410  :  NOK - shoud replace makefile">&2
     	echo "">&2 	
 	exit 0         
 	;; 
