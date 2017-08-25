@@ -68,3 +68,5 @@ printf "\n";
 printf "File system usage\n";
 
 df -h
+lsblk
+
