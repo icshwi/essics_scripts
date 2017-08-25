@@ -1,6 +1,6 @@
 # -*- mode: sh -*-
 #
-#  Copyright (c) 2016 Jeong Han Lee
+#  Copyright (c) 2016 - Present Jeong Han Lee
 #  Copyright (c) 2016 - Present European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  Email   : han.lee@esss.se
-#  Date    : 
-#  Version : 0.0.3
+#  Date    : Thursday, August 24 15:23:49 CEST 2017
+#  Version : 0.0.3-patch
 
 
 
@@ -65,7 +65,7 @@ function find_kmod_rule() {
 
     local rule=$1;
     if [[ ! -f ${rule} ]]; then
-	printf ">> %s doesn't exist. Maybe this system doens't it\n" "${rule}";
+	printf ">> %s doesn't exist. Maybe this system doesn't it\n" "${rule}";
     else
 	printf ">> %s was found. \n" "${rule}"
 	printf "   ${rule} contains \n"
