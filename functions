@@ -18,8 +18,8 @@
 #
 #  Author  : Jeong Han Lee
 #  Email   : jeonghan.lee@gmail.com
-#  Date    : Saturday, June  3 00:01:51 CEST 2017
-#  Version : 0.0.6
+#  Date    : Friday, August 25 10:29:50 CEST 2017
+#  Version : 0.0.7
 
 
 ROOT_UID=0 
@@ -326,4 +326,28 @@ function compare_strs() {
 	result=$NON_EXIST
     fi
     echo "${result}"	
+}
+
+
+
+function cat_file () {
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+    local file=$1
+
+    cat $file
+    __end_func ${func_name};
+}
+
+
+function printf_tee() {
+    local input=${1};
+    local target=${2};
+    # If target exists, it will be overwritten.
+    ${SUDO_CMD} printf "%s" "${input}" | ${SUDO_CMD} tee "${target}";
+};
+
+
+function get_macaddr() {
+    local dev=${1};
+    ip addr show dev ${dev} | grep "link/ether" | awk '{print $2}'
 }
