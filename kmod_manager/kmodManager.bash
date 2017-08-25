@@ -66,12 +66,12 @@ function modprobe_kmod(){
     printf "Removing ${kmod_name} ... \n"
 
     if [ -z "$ecat_dev" ]; then
-	${SUDO_CMD} modprobe -r ${kmod_name};
+	${SUDO_CMD} modprobe -rv ${kmod_name};
 	${SUDO_CMD} modprobe -v ${kmod_name};
     else
 	local mac_address=$(get_macaddr ${ecat_dev});
-	${SUDO_CMD} modprobe -r ${ECAT_KMOD_GENERIC_NAME};
-	${SUDO_CMD} modprobe -r ${kmod_name};
+	${SUDO_CMD} modprobe -rv ${ECAT_KMOD_GENERIC_NAME};
+	${SUDO_CMD} modprobe -rv ${kmod_name};
 	${SUDO_CMD} modprobe -v ${kmod_name} main_devices=\"${mac_address}\";
 	${SUDO_CMD} modprobe -v ${ECAT_KMOD_GENERIC_NAME};
     fi
@@ -129,7 +129,7 @@ function put_udev_rule(){
 	    target="${udev_rules_dir}/99-${SIS_KMOD_NAME}.rules";
 	    ;;
 	${ECAT_KMOD_NAME})
-	    rule="KERNEL==\"EtherCAT[0-9]*\", NAME=\"%k\", MODE=\"0666\"";
+	    rule="KERNEL==\"EtherCAT*\", SUBSYSTEM==\"EtherCAT\", MODE=\"0666\"";
 	    target="${udev_rules_dir}/99-${ECAT_KMOD_NAME}.rules";
 	    ;;
 	*)
