@@ -7,5 +7,7 @@ tosca_driver*
 #*
 u-boot*
 m-*
+*.rpm
+*.deb
 
 
