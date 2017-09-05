@@ -18,8 +18,8 @@
 #
 # Author : Jeong Han Lee
 # email  : han.lee@esss.se
-# Date   : Tuesday, August 22 15:11:42 CEST 2017
-# version : 0.0.2
+# Date   : 
+# version : 0.0.3
 
 set -efo pipefail
 
@@ -90,10 +90,10 @@ function make_install_epics_mode() {
 
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     printf "Setup the EPICS mode for emacs\n";
-    printf "Create Sym link %s" "${HOME}/${EMACS_D}/${EMACS_EPICS_MODE}" ;
+    printf "Hard copy  %s" "${HOME}/${EMACS_D}/${EMACS_EPICS_MODE}" ;
 
     mkdir -p ${HOME}/${EMACS_D};
-    scp -r  ${SC_TOP}/${EMACS_EPICS_MODE} ${HOME}/${EMACS_D}/${EMACS_EPICS_MODE};
+    scp -r  ${SC_TOP}/${EMACS_EPICS_MODE} ${HOME}/${EMACS_D}/;
 
     end_func ${func_name}; 
 }
@@ -147,7 +147,7 @@ function clean_epics_mode() {
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     local epicsmode=${HOME}/${EMACS_D}/${EMACS_EPICS_MODE};
 
-    if [[ -e ${epicsmode} ]]; then
+    if [[ -a ${epicsmode} ]]; then
 	printf "Cleaning %s" "${epicsmode}";
 	rm -f ${epicsmode};
     fi
@@ -160,10 +160,9 @@ function clean_cfg() {
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     local target_name=${HOME}/.${1};
 
-    if [[ -e ${target_name} ]]; then
-	printf "Cleaning cfg : %s" "${target_name}";
-	rm -f ${target_name};
-    fi	
+    printf "Cleaning cfg : %s" "${target_name}";
+    rm -f ${target_name};
+
     end_func ${func_name};  
 }
 
@@ -174,7 +173,7 @@ function clean_ssh_mode() {
     local func_name=${FUNCNAME[*]}; ini_func ${func_name};
     local local_mode=${HOME}/${SSH_D}/${SSH_CONF_FILE};
    
-    if [[ -e ${local_mode} ]]; then
+    if [[ -a ${local_mode} ]]; then
 	printf "Cleaning %s" "${loca_mode}";
 	rm -f ${local_mode};
     fi
@@ -188,12 +187,12 @@ function clean_gits() {
     local git_prompt="${HOME}/.${GIT_PROMPT}";
     local git_completion="${HOME}/.${GIT_COMPET}";
 
-    if [[ -e ${git_prompt} ]]; then
+    if [[ -a ${git_prompt}  ]]; then
 	printf "Cleaing gits : %s" "${git_prompt}";
 	rm -f ${git_prompt};
     fi	
 
-    if [[ -e ${git_completion} ]]; then
+    if [[ -a ${git_completion} ]]; then
 	printf "Cleaing gits : %s" "${git_completion}";
 	rm -f ${git_completion};
     fi	
