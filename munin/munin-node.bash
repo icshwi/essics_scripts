@@ -24,7 +24,7 @@
 
 sudo yum -y install epel-release
 sudo yum -y install munin-node munin-java-plugins munin-netip-plugins cpan
-sudo yum -y install git tree emacs screen telnet 
+sudo yum -y install git tree emacs screen telnet ipmitool
 sudo yum -y groupinstall "Development tools"
 
 export PERL_MM_USE_DEFAULT=1 && sudo -E perl -MCPAN -e 'install "Module::Build"; install "Net::Server"; install "Net::Server::Fork"; install "Time::HiRes"; install "Net::SNMP"; install "CGI::Fast"; install "Digest::MD5"; install "File::Copy::Recursive"; install "Getopt::Long"; install "HTML::Template"; install "IO::Socket::INET6"; install "Params::Validate"; install "Storable"; install "Text::Balanced";'
