@@ -19,8 +19,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : Friday, September  8 11:46:53 CEST 2017
-#   version : 0.0.3
+#   date    : Friday, September  8 16:34:34 CEST 2017
+#   version : 0.0.4
 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
@@ -61,7 +61,7 @@ ${SUDO_CMD} iptables -I INPUT -p tcp -s ${MUNIN_MASTER_IP}/32 --dport ${MUNIN_NO
 
 
 ${SUDO_CMD} systemctl enable munin-node
-${SUDO_CMD} munin-node-configure --shell --families=contrib,auto | sh -x
+${SUDO_CMD} munin-node-configure --shell --families=contrib,auto | ${SUDO_CMD} sh -x
 ${SUDO_CMD} systemctl start munin-node
 
 pushd ${SC_TOP}
