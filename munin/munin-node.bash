@@ -61,7 +61,7 @@ ${SUDO_CMD} iptables -I INPUT -p tcp -s ${MUNIN_MASTER_IP}/32 --dport ${MUNIN_NO
 
 
 ${SUDO_CMD} systemctl enable munin-node
-${SUDO_CMD} munin-node-configure --shell
+${SUDO_CMD} munin-node-configure --shell --families=contrib,auto | sh -x
 ${SUDO_CMD} systemctl start munin-node
 
 pushd ${SC_TOP}
