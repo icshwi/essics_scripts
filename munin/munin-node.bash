@@ -36,7 +36,7 @@ set +a
 
 
 ${SUDO_CMD} yum -y install epel-release
-${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-netip-plugins cpan
+${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-ruby-plugins munin-async munin-cgi munin-common munin-netip-plugins ethtool  cpan perl-libxml-perl
 ${SUDO_CMD} yum -y install git tree emacs screen telnet ipmitool
 ${SUDO_CMD} yum -y groupinstall "Development tools"
 
