@@ -62,7 +62,7 @@ ${SUDO_CMD} iptables -I INPUT -p tcp -s ${MUNIN_MASTER_IP}/32 --dport ${MUNIN_NO
 
 ${SUDO_CMD} systemctl enable munin-node
 ${SUDO_CMD} munin-node-configure --shell
-
+${SUDO_CMD} systemctl start munin-node
 
 pushd ${SC_TOP}
 
@@ -80,5 +80,5 @@ ${SUDO_CMD} install -m 644 ./tmp/munin-node.conf ${MUNIN_HOME}
 popd
 
 
-${SUDO_CMD} systemctl start munin-node
+${SUDO_CMD} systemctl restart munin-node
 
