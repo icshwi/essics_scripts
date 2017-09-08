@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+#  Copyright (c) 2017 - Present  Jeong Han Lee
 #  Copyright (c) 2016 - Present European Spallation Source ERIC
 #
 #  The program is free software: you can redistribute
@@ -18,16 +19,28 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : 
-#   version : 0.0.2
+#   date    : Friday, September  8 11:46:53 CEST 2017
+#   version : 0.0.3
 
 
-sudo yum -y install epel-release
-sudo yum -y install munin-node munin-java-plugins munin-netip-plugins cpan
-sudo yum -y install git tree emacs screen telnet ipmitool
-sudo yum -y groupinstall "Development tools"
+declare -gr SC_SCRIPT="$(realpath "$0")"
+declare -gr SC_SCRIPTNAME=${0##*/}
+declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
 
-export PERL_MM_USE_DEFAULT=1 && sudo -E perl -MCPAN -e 'install "Module::Build"; install "Net::Server"; install "Net::Server::Fork"; install "Time::HiRes"; install "Net::SNMP"; install "CGI::Fast"; install "Digest::MD5"; install "File::Copy::Recursive"; install "Getopt::Long"; install "HTML::Template"; install "IO::Socket::INET6"; install "Params::Validate"; install "Storable"; install "Text::Balanced";'
+: ${HOSTNAME?"Please Define hostname first"}
+
+set -a
+. ${SC_TOP}/munin-env.conf
+set +a
+
+
+
+${SUDO_CMD} yum -y install epel-release
+${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-netip-plugins cpan
+${SUDO_CMD} yum -y install git tree emacs screen telnet ipmitool
+${SUDO_CMD} yum -y groupinstall "Development tools"
+
+export PERL_MM_USE_DEFAULT=1 && sudo -E perl -MCPAN -e 'install "Module::Build"; install "Net::Server"; install "Net::Server::Fork"; install "Time::HiRes"; install "Net::SNMP"; install "CGI::Fast"; install "Digest::MD5"; install "File::Copy::Recursive"; install "Getopt::Long"; install "HTML::Template"; install "IO::Socket::INET6"; install "Params::Validate"; install "Storable"; install "Text::Balanced"; install "Net::CIDR";'
 
 
 
@@ -36,23 +49,36 @@ export PERL_MM_USE_DEFAULT=1 && sudo -E perl -MCPAN -e 'install "Module::Build";
 # /usr/lib/firewalld/services/munin-node.xml
 # add the munin-node in the firewalled service
 
-sudo firewall-cmd --zone=public --add-service=munin-node --permanent
-sudo firewall-cmd --reload
+${SUDO_CMD} firewall-cmd --zone=public --add-service=munin-node --permanent
+${SUDO_CMD} firewall-cmd --reload
 
 
-sudo systemctl enable munin-node
-sudo munin-node-configure --shell
-sudo systemctl start munin-node
+# ESS DM Ansible mess iptable up, so one should enable the telnet connection from Munin-master (Server)
+# to 4949 port 
+
+${SUDO_CMD} iptables -I INPUT -p tcp -s ${MUNIN_MASTER_IP}/32 --dport ${MUNIN_NODE_PORT} -j ACCEPT
 
 
-# One must update the proper configuration in  /etc/munin/munin-node.conf 
-# host_name icslab-ser01
-# or one of the following
-# cidr_allow 10.0.0.0/16        255.255.0.0
-# cidr_allow 10.0.1.0/24        255.255.255.0
-# The below option is highly recommended
-# 
-# cidr_allow 10.0.7.177/32      255.255.255.255
-# 
-# Restart munin-node after modification
-# sudo  systemctl restart munin-node
+
+${SUDO_CMD} systemctl enable munin-node
+${SUDO_CMD} munin-node-configure --shell
+
+
+pushd ${SC_TOP}
+
+mkdir -p tmp
+cat > ./tmp/${MUNIN_NODE_M4} <<EOF
+include(\`${MUNIN_NODE_CONF_M4}')
+MUNIN_NODE(\`${HOSTNAME}', \`${MUNIN_MASTER_IP}', \`${MUNIN_NODE_PORT}')
+EOF
+
+
+m4 ./tmp/${MUNIN_NODE_M4}  > ./tmp/munin-node.conf
+
+${SUDO_CMD} install -m 644 ./tmp/munin-node.conf ${MUNIN_HOME}
+
+popd
+
+
+${SUDO_CMD} systemctl start munin-node
+

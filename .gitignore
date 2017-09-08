@@ -9,5 +9,6 @@ u-boot*
 m-*
 *.rpm
 *.deb
+tmp*
 
 
