@@ -34,6 +34,7 @@ set -a
 set +a
 
 
+${SUDO_CMD} -v
 
 ${SUDO_CMD} yum -y install epel-release
 ${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-ruby-plugins munin-async munin-cgi munin-common munin-netip-plugins ethtool  cpan perl-libxml-perl
