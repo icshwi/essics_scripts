@@ -19,7 +19,7 @@
 # Author : Jeong Han Lee
 # email  : han.lee@esss.se
 # Date   : 
-# version : 0.0.3
+# version : 0.0.4
 
 set -efo pipefail
 
@@ -106,6 +106,7 @@ function make_ssh_mode() {
     printf "Create Sym link %s" "${HOME}/${SSH_D}/${SSH_CONF_FILE}" ;
 
     mkdir -p ${HOME}/${SSH_D};
+    chmod 600 ${HOME}/${SSH_D}/${SSH_CONF_FILE};
     ln -sf  ${SC_TOP}/${SSH_CONF_FILE} ${HOME}/${SSH_D}/${SSH_CONF_FILE};
 
     end_func ${func_name}; 
@@ -119,7 +120,7 @@ function make_install_ssh_mode() {
     printf "Create Sym link %s" "${HOME}/${SSH_D}/${SSH_CONF_FILE}" ;
 
     mkdir -p ${HOME}/${SSH_D};
-    scp -r  ${SC_TOP}/${SSH_CONF_FILE} ${HOME}/${SSH_D}/${SSH_CONF_FILE};
+    install -m 600  ${SC_TOP}/${SSH_CONF_FILE} ${HOME}/${SSH_D}/${SSH_CONF_FILE};
 
     end_func ${func_name}; 
 }
