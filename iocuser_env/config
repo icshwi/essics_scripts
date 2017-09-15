@@ -8,6 +8,16 @@ Compression yes
 CompressionLevel 6
 ServerAliveInterval 200
  
+
+Host icslab-ser01
+     Hostname 10.4.0.146
+     User icssev
+
+Host icslab-ser02
+     Hostname 10.4.0.144
+     User icssev
+
+
 Host icslab-ecat01
      Hostname 10.4.8.11
      User iocuser
@@ -20,3 +30,11 @@ Host icslab-archappl01
      Hostname 10.4.8.15
      User aauser
      
+
+Host icslab-ts0
+     Hostname 10.4.8.16
+     User iocuser
+
+Host icslab-mtc02
+     Hostname 10.4.8.17
+     User iocuser
