@@ -19,8 +19,8 @@
 #
 #   author  : Jeong Han Lee
 #   email   : jeonghan.lee@gmail.com
-#   date    : Friday, September  8 16:34:34 CEST 2017
-#   version : 0.0.4
+#   date    : Wednesday, September 27 22:48:45 CEST 2017
+#   version : 0.0.5
 
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
@@ -37,7 +37,7 @@ set +a
 ${SUDO_CMD} -v
 
 ${SUDO_CMD} yum -y install epel-release
-${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-ruby-plugins munin-async munin-cgi munin-common munin-netip-plugins ethtool  cpan perl-libxml-perl
+${SUDO_CMD} yum -y install munin-node munin-java-plugins munin-ruby-plugins munin-async munin-cgi munin-common munin-netip-plugins ethtool  cpan perl-libxml-perl 
 ${SUDO_CMD} yum -y install git tree emacs screen telnet ipmitool
 ${SUDO_CMD} yum -y groupinstall "Development tools"
 
@@ -55,11 +55,23 @@ ${SUDO_CMD} firewall-cmd --reload
 
 
 # ESS DM Ansible mess iptable up, so one should enable the telnet connection from Munin-master (Server)
-# to 4949 port 
+# to 4949 port
+# In the case, no service is installed (no DM)
+${SUDO_CMD} yum -y install iptables-service 
+${SUDO_CMD} systemctl enable iptables
 
+# In the case, iptables service is not running. If the service is running, nothing happens
+
+${SUDO_CMD} systemctl start iptables
+
+# Add the rule for munin 
 ${SUDO_CMD} iptables -I INPUT -p tcp -s ${MUNIN_MASTER_IP}/32 --dport ${MUNIN_NODE_PORT} -j ACCEPT
 
+# Save the rule in /etc/sysconfig/iptable (with iptable-service)
+${SUOD_CMD} iptables-save > /etc/sysconfig/iptable
 
+# Restart the service in order to load the saved configuraton
+${SUDO_CMD} systemctl start iptables
 
 ${SUDO_CMD} systemctl enable munin-node
 ${SUDO_CMD} munin-node-configure --shell --families=contrib,auto | ${SUDO_CMD} sh -x
