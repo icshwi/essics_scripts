@@ -935,6 +935,10 @@
 	"help"
 	"iocBuild"
         "iocInit"
+	"mrmEvgSetupPCI"
+	"mrmEvrSetupPCI"
+	"var"
+	"require"
 	)
       )
 
