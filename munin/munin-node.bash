@@ -121,9 +121,11 @@ function setup_for_centos {
     
     # Restart the service in order to load the saved configuraton
     ${SUDO_CMD} systemctl start iptables
-    
+
     ${SUDO_CMD} systemctl enable munin-node
     ${SUDO_CMD} munin-node-configure --shell --families=contrib,auto | ${SUDO_CMD} sh -x
+
+    ${SUDO_CMD} systemctl restart httpd
     ${SUDO_CMD} systemctl start munin-node
     
 }
@@ -149,7 +151,9 @@ EOF
     
     
   
-    ${SUDO_CMD} systemctl restart apache2
+ #   ${SUDO_CMD} systemctl restart apache2
+    # CentOS7.4 has httpd service
+ #   ${SUDO_CMD} systemctl restart httpd
     ${SUDO_CMD} systemctl restart munin-node
     
 }
@@ -193,12 +197,13 @@ case "$dist" in
 	yes_or_no_to_go "Debian is detected as $dist"
 	setup_for_debian
 	munin-node-setup "${DEBIAN_MUNIN_NODE_CONF_M4}"
+	${SUDO_CMD} systemctl restart apache2
 	;;
     *CentOS*)
 	yes_or_no_to_go "CentOS is detected as $dist";
 	setup_for_centos
 	munin-node-setup "${CENTOS_MUNIN_NODE_CONF_M4}"
-
+	${SUDO_CMD} systemctl restart httpd
 	;;
     *)
 	printf "\n";
