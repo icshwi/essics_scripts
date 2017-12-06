@@ -12,4 +12,8 @@ sudo yum -y install libXpm-devel libjpeg-turbo-devel openjpeg-devel openjpeg2-de
 
 make
 
+
 sudo make install 
+
+# sudo yum -y remove emacs
+# sudo ln -s /usr/local/bin/emacs /usr/bin/emacs
