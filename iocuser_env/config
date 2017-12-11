@@ -17,7 +17,14 @@ Host icslab-ser02
      Hostname 10.4.0.144
      User icssev
 
+Host icslab-ser03
+     Hostname 10.4.8.22
+     User icssev
 
+Host icslab-ser04
+     Hostname 10.4.8.23
+     User icssev
+     
 Host icslab-ecat01
      Hostname 10.4.8.11
      User iocuser

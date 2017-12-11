@@ -11,4 +11,5 @@ m-*
 *.deb
 tmp*
 mrfioc2*
-
+temp*
+*_scripts
