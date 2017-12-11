@@ -24,15 +24,17 @@
 
 #declare -gr JDK_URL="http://download.oracle.com/otn-pub/java/jdk/8u144-b01/090f390dda5b47b9b721c7dfaa008135/jdk-8u144-linux-x64.rpm"
 
-declare -gr JDK_VER="8u144";
+declare -gr VER="152";
 
-declare -gr JAVA_PATH="/usr/java/jdk1.8.0_144"
+declare -gr JDK_VER="8u${VER}";
+
+declare -gr JAVA_PATH="/usr/java/jdk1.8.0_${VER}"
 declare -gr JDK_RPM="jdk-${JDK_VER}-linux-x64.rpm"
 declare -gr ORACLE_KEY="090f390dda5b47b9b721c7dfaa008135";
 
 declare -gr JDK_URL="http://download.oracle.com/otn-pub/java/jdk/${JDK_VER}-b01/${ORACLE_KEY}/${JDK_RPM}"
 
-wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" ${JDK_URL}
+#wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" ${JDK_URL}
 
 
 sudo yum localinstall ${JDK_RPM}
