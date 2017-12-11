@@ -37,7 +37,7 @@ declare -gr JDK_URL="http://download.oracle.com/otn-pub/java/jdk/${JDK_VER}-b01/
 #wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" ${JDK_URL}
 
 
-sudo yum localinstall ${JDK_RPM}
+sudo yum localinstall -y ${JDK_RPM}
 
 
 sudo alternatives --install /usr/bin/java   java    ${JAVA_PATH}/jre/bin/java 20000
