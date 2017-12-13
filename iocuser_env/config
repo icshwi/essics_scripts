@@ -45,3 +45,7 @@ Host icslab-ts0
 Host icslab-mtc02
      Hostname 10.4.8.17
      User iocuser
+
+Host icslab-doppler01
+     Hostname 10.4.8.70
+     User icssev
