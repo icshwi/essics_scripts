@@ -142,6 +142,15 @@ function put_udev_rule(){
     printf "Put the udev rule : %s in %s to be accessible via an user.\n" "$rule" "$target";
     printf_tee "$rule" "$target";
     cat_file ${target}
+    
+#trigger update of udev rules without reboot (William Ledda)
+	if [ -f /bin/udevadm ]; then
+		echo "Triggering online rules update"
+		/bin/udevadm trigger
+	else
+		echo "No udevadm found. Reboot your system to apply new rules!"
+	fi
+	    
     __end_func ${func_name};
 }
 
