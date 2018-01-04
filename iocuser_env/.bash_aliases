@@ -54,6 +54,9 @@ alias p5="ps -eo user,pcpu,pid,cmd | sort -r -k2 | head -6"
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
+alias E3='source /epics/modules/require/2.5.4/bin/setE3Env.bash'
+
+
 export EPICS_CA_AUTO_ADDR_LIST=yes
 
 

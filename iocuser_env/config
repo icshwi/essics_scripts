@@ -38,9 +38,9 @@ Host icslab-archappl01
      User aauser
      
 
-Host icslab-ts0
+Host icslab-ts01
      Hostname 10.4.8.16
-     User iocuser
+     User timinguser
 
 Host icslab-mtc02
      Hostname 10.4.8.17
