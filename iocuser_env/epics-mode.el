@@ -22,7 +22,9 @@
 ;;              epicsdb to epics mode. 
 ;; 0.1.1    : Friday, November 11 18:06:49 CET 2016,
 ;;            - add st.cmd functions
-;; 
+;;
+;; 0.1.2    : Monday, January  8 11:18:54 CET 2018,
+;;            - add snmp3 record and field types
 
 ;; The references for writing this codes are 
 ;; 1) http://ergoemacs.org/emacs/elisp_syntax_coloring.html
@@ -112,6 +114,8 @@
 	"subArray"
 	"sub"
 	"waveform"
+	"snmp"
+	"snmpstr"
 	)
       )
 
@@ -156,7 +160,7 @@
 	"ASG"
 	"TSE"
 	"TSEL"
-	"DTYP"
+;;	"DTYP"
 	"MLOK"
 	"MLIS"
 	"DISP"
@@ -713,6 +717,13 @@
 	"NORD"
 	"BPTR"
 	"MALM"
+	;; snmp3
+	"VERS"
+	"HOST"
+	"COMM"
+	"OIDS"
+	"AUTH"
+	"PRIV"
 ;;
 ;; Protocol the input value of the system variable
 ;;
