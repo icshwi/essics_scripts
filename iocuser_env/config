@@ -49,3 +49,13 @@ Host icslab-mtc02
 Host icslab-doppler01
      Hostname 10.4.8.70
      User icssev
+
+
+Host icslab-ipc01
+     Hostname 10.4.8.24
+     User timinguser
+
+Host icslab-ipc02
+     Hostname 10.4.8.25
+     User iocuser
+     
