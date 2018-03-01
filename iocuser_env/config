@@ -63,3 +63,8 @@ Host icslab-inv02
      Hostname 10.4.8.26
      User iocuser
 
+    
+Host icslab-mtca-t00
+     Hostname 10.4.8.72
+     User iocuser
+
