@@ -33,11 +33,11 @@ Host icslab-ecat02
      Hostname 10.4.8.12
      User iocuser
 
+
 Host icslab-archappl01
      Hostname 10.4.8.15
      User aauser
      
-
 Host icslab-ts01
      Hostname 10.4.8.16
      User timinguser
@@ -45,17 +45,21 @@ Host icslab-ts01
 Host icslab-mtc02
      Hostname 10.4.8.17
      User iocuser
-
-Host icslab-doppler01
-     Hostname 10.4.8.70
-     User icssev
+     
+Host icslab-inv01
+     Hostname 10.4.8.18
+     User iocuser
 
 
 Host icslab-ipc01
      Hostname 10.4.8.24
      User timinguser
-
+     
 Host icslab-ipc02
      Hostname 10.4.8.25
      User iocuser
-     
+
+Host icslab-inv02
+     Hostname 10.4.8.26
+     User iocuser
+

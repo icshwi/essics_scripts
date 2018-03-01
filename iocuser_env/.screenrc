@@ -10,7 +10,7 @@ vbell                   off
 termcapinfo rxvt-unicode 'hs:ts=\E]2;:fs=\007:ds=\E]2;SSSscreen\007'
 termcapinfo xterm* ti@:te@
 
-defscrollback 100000
+defscrollback 1000000
 autodetach on
 hardstatus alwayslastline '%{= M} %H%{= G} %l %= %{= w}%-w%{+b r}%n*%t%{-b r}%{w}%+w %= %{c} %Y/%M/%d %{B}%c '
 
