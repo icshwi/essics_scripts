@@ -16,16 +16,19 @@
 #  You should have received a copy of the GNU General Public License along with
 #  this program. If not, see https://www.gnu.org/licenses/gpl-2.0.txt
 #
-# Author : Jeong Han Lee
-# email  : han.lee@esss.se
-# Date   : Monday, August 28 13:58:37 CEST 2017
-# version : 0.0.4
+# Author  : Jeong Han Lee
+# email   : han.lee@esss.se
+# Date    : Thursday, April  5 12:05:06 CEST 2018
+# version : 1.0.0
 #
+
 
 declare -gr SC_SCRIPT="$(realpath "$0")"
 declare -gr SC_SCRIPTNAME="$(basename "$SC_SCRIPT")"
 declare -gr SC_TOP="$(dirname "$SC_SCRIPT")"
 declare -gr SC_LOGDATE="$(date +%Y%b%d-%H%M-%S%Z)"
+
+declare -gr SUDO_CMD="sudo";
 
 declare hostname_cmd="$(hostname)"
 
@@ -47,15 +50,38 @@ function __checkstr() {
     fi
 }
 
-function download_css() {
+
+function die()
+{
+    error=${1:-1}
+    ## exits with 1 if error number not given
+    shift
+    [ -n "$*" ] &&
+	printf "%s%s: %s\n" "$scriptname" ${version:+" ($version)"} "$*" >&2
+    exit "$error"
+}
+
+## Arguments : CSS_TYPE, CSS_VERSION, CSS_DIR
+
+function download_css()
+{
 
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+    local file_name=$1
+    local css_url="https://artifactory01.esss.lu.se:443/artifactory/CS-Studio/${CSS_TYPE}/${CSS_VERSION}";
+ 
+    $wget_command ${css_url}/${file_name} || die 1 "Download ERROR : Please check your version and type (production or development)"  ;
 
-    local css_url="https://artifactory01.esss.lu.se/artifactory/CS-Studio/${CSS_TYPE}/${CSS_VERSION}";
-    local css_filename="cs-studio-ess-${CSS_VERSION}-linux.gtk.x86_64.tar.gz";
+    
+    __end_func ${func_name};
+}
 
-    $wget_command ${css_url}/${css_filename} 
-
+function css_config()
+{
+    
+    local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
+    local file_name=$1
+    
     ${SUDO_CMD} -v
 
     if [[ -L ${CSS_DIR} && -d ${CSS_DIR} ]]
@@ -72,7 +98,7 @@ function download_css() {
     fi
 
     # Extract css into ${CSS_TOP}, so it has the following name : cs-studio
-    ${SUDO_CMD} $tar_command ${css_filename}  -C ${CSS_TOP}
+    ${SUDO_CMD} $tar_command ${file_name}  -C ${CSS_TOP} || die 1 "Extraction ERROR : Please check your permission or other issues"  ;
     # Rename to 
     ${SUDO_CMD} mv ${CSS_GENERIC_DIR} ${CSS_DEPLOY_DIR}
     # Create a symlink ${CSS_DIR} 
@@ -198,27 +224,84 @@ function update_css_configuration() {
 
 
 
+declare -gr DEFAULT_CSS_VERSION="4.5.7.1";
+declare -g  DEFAULT_CSS_TYPE="production";
+declare -g  DEV_CSS_TYPE="development";
+
 declare -gr CSS_TOP="/opt";
-declare -gr CSS_VERSION="4.5.1.0";
-#declare -gr CSS_VERSION="4.5.0.2";
 declare -gr CSS_GENERIC_NAME="cs-studio";
+
+
 declare -gr CSS_GENERIC_DIR=${CSS_TOP}/${CSS_GENERIC_NAME};
-#declare -gr CSS_DIR=${CSS_GENERIC_DIR}-${CSS_VERSION}
 declare -gr CSS_DIR=${CSS_GENERIC_DIR}
-declare -gr CSS_TYPE="production"
+declare -g  CSS_FILENAME="";
+
 declare -gr CSS_DEPLOY_DIR=${CSS_DIR}_${SC_LOGDATE}
 
 declare -g  CSS_USER=""
 declare -g  CSS_USER_HOME=""
-declare -gr SUDO_CMD="sudo";
+
+
+declare -g  CSS_VERSION="";
+declare -g  CSS_TYPE="";
 
 
 wget_command="wget -c"
 tar_command="tar xzf"
 
 
-download_css
 
+function usage
+{
+    {
+	echo "";
+	echo "Usage    : $0 [-v <css_version> ] [-d ] ";
+	echo "";
+	echo "         : -v  <css version> : select css version ";
+	echo "         : -d                : select the development branch";
+	echo "";
+	echo "Examples : ";
+	echo "          -v 4.5.7.2 -d ";
+	echo "          -v 4.5.7.1"; 
+
+    } 1>&2;
+    exit 1; 
+}
+
+dev_flag=
+
+while getopts " v:dh" opt; do
+    case "${opt}" in
+	v)
+	    CSS_VERSION=${OPTARG}
+	    ;;
+	d)
+	    dev_flag=1
+	    ;;
+	h)
+	    usage
+	    ;;
+	*)
+	    usage
+	    ;;
+    esac
+done
+shift $((OPTIND-1))
+
+if [ -z "${CSS_VERSION}" ] ; then
+    CSS_VERSION=${DEFAULT_CSS_VERSION}
+fi
+
+if [ ! -z "$dev_flag" ]; then
+    CSS_TYPE=${DEV_CSS_TYPE}
+ else
+    CSS_TYPE=${DEFAULT_CSS_TYPE}
+fi
+
+
+CSS_FILENAME="cs-studio-ess-${CSS_VERSION}-linux.gtk.x86_64.tar.gz"
+
+download_css ${CSS_FILENAME}
+css_config ${CSS_FILENAME}
 define_css_user_home
-
 update_css_configuration
