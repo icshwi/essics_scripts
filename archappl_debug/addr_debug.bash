@@ -21,14 +21,24 @@ function set_ca_addr
     print_ca_addr
 }
 
+function caget_ft
+{
+    caget "$1"
+}
+
+APV="WAVEGENTRIG:IocStats:SYS_CPU_LOAD"
+
 
 unset_ca_addr
-
 print_ca_addr
+set_ca_addr "$1" "NO"
 
-set_ca_addr "$1" "$2"
+caget_ft $APV
 
-caget WAVEGENTRIG:IocStats:SYS_CPU_LOAD
+unset_ca_addr
+set_ca_addr "$1" "YES"
+caget_ft $APV
+
 
 # WORKS
 # bash addr_debug.bash "10.4.8.22" "YES"
