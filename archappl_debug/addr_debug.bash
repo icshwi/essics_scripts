@@ -34,9 +34,7 @@ APV="WAVEGENTRIG:IocStats:SYS_CPU_LOAD"
 
 
 unset_ca_addr
-print_ca_addr
 set_ca_addr "$1" "NO"
-
 caget_ft $APV
 
 unset_ca_addr
