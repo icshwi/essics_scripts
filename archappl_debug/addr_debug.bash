@@ -3,19 +3,23 @@
 
 function unset_ca_addr
 {
+    printf "Unset .... \n"
     unset EPICS_CA_ADDR_LIST
     unset EPICS_CA_AUTO_ADDR_LIST
+    printf "\n";
 }
 
 function print_ca_addr
 {
+    printf "\n"
     echo "EPICS_CA_ADDR_LIST      : $EPICS_CA_ADDR_LIST"
     echo "EPICS_CA_AUTO_ADDR_LIST : $EPICS_CA_AUTO_ADDR_LIST"
-    
+    printf "\n";
 }
 
 function set_ca_addr
 {
+    printf "Set ... \n";
     export EPICS_CA_ADDR_LIST="$1"
     export EPICS_CA_AUTO_ADDR_LIST="$2";
     print_ca_addr
