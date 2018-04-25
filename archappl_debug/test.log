@@ -1,0 +1,82 @@
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22
+EPICS_CA_AUTO_ADDR_LIST : NO
+
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.0375362
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22
+EPICS_CA_AUTO_ADDR_LIST : YES
+
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.0375362
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.255
+EPICS_CA_AUTO_ADDR_LIST : NO
+
+Channel connect timed out: 'WAVEGENTRIG:IocStats:SYS_CPU_LOAD' not found.
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.255
+EPICS_CA_AUTO_ADDR_LIST : YES
+
+Channel connect timed out: 'WAVEGENTRIG:IocStats:SYS_CPU_LOAD' not found.
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.255.255
+EPICS_CA_AUTO_ADDR_LIST : NO
+
+Channel connect timed out: 'WAVEGENTRIG:IocStats:SYS_CPU_LOAD' not found.
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.255.255
+EPICS_CA_AUTO_ADDR_LIST : YES
+
+Warning: Duplicate EPICS CA Address list entry "10.4.255.255:5064" discarded
+Channel connect timed out: 'WAVEGENTRIG:IocStats:SYS_CPU_LOAD' not found.
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22 10.4.8.255
+EPICS_CA_AUTO_ADDR_LIST : NO
+
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.0375362
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22 10.4.8.255
+EPICS_CA_AUTO_ADDR_LIST : YES
+
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.0375362
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22 10.4.255.255
+EPICS_CA_AUTO_ADDR_LIST : NO
+
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.775745
+Unset .... 
+
+Set ... 
+
+EPICS_CA_ADDR_LIST      : 10.4.8.22 10.4.255.255
+EPICS_CA_AUTO_ADDR_LIST : YES
+
+Warning: Duplicate EPICS CA Address list entry "10.4.255.255:5064" discarded
+WAVEGENTRIG:IocStats:SYS_CPU_LOAD 0.775745
