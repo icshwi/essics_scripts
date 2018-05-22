@@ -76,7 +76,7 @@ function modprobe_kmod(){
 	${SUDO_CMD} modprobe -v ${ECAT_KMOD_GENERIC_NAME};
     fi
 
-    INFO_list+=("$(modinfo ${kmod_name})");
+    INFO_list+=("$(${SUDO_CMD} modinfo ${kmod_name})");
     INFO_list+=("$(lsmod |grep ${kmod_name})");
 
     __end_func ${func_name};
