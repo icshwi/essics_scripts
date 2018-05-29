@@ -53,7 +53,7 @@ Host icslab-inv01
 
 Host icslab-ipc01
      Hostname 10.4.8.24
-     User timinguser
+     User iocuser
      
 Host icslab-ipc02
      Hostname 10.4.8.25
