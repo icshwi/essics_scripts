@@ -68,7 +68,7 @@ function download_css()
 
     local func_name=${FUNCNAME[*]}; __ini_func ${func_name};
     local file_name=$1
-    local css_url="https://artifactory01.esss.lu.se:443/artifactory/CS-Studio/${CSS_TYPE}/${CSS_VERSION}";
+    local css_url="https://artifactory.esss.lu.se:443/artifactory/CS-Studio/${CSS_TYPE}/${CSS_VERSION}";
  
     $wget_command ${css_url}/${file_name} || die 1 "Download ERROR : Please check your version and type (production or development)"  ;
 
@@ -224,7 +224,7 @@ function update_css_configuration() {
 
 
 
-declare -gr DEFAULT_CSS_VERSION="4.5.7.1";
+declare -gr DEFAULT_CSS_VERSION="4.6.1.6";
 declare -g  DEFAULT_CSS_TYPE="production";
 declare -g  DEV_CSS_TYPE="development";
 
