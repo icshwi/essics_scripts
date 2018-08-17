@@ -54,9 +54,26 @@ alias p5="ps -eo user,pcpu,pid,cmd | sort -r -k2 | head -6"
 alias path='echo -e ${PATH//:/\\n}'
 alias libpath='echo -e ${LD_LIBRARY_PATH//:/\\n}'
 
-alias E3='source /epics/modules/require/2.5.4/bin/setE3Env.bash'
+#alias E3='source /epics/modules/require/2.5.4/bin/setE3Env.bash'
+#export EPICS_CA_AUTO_ADDR_LIST=yes
 
 
-export EPICS_CA_AUTO_ADDR_LIST=yes
+goE3() {
 
+       E3_PATH1=${HOME}/e3
+       E3_PATH2=${HOME}/ics_gitsrc/e3
+       E3_PATH3=/epics/base-3.15.5/require/3.0.0/bin
+
+       if [ -d "$E3_PATH1" ]; then
+       	  . ${E3_PATH1}/tools/setenv
+       elif [ -d "$E3_PATH2" ]; then
+          . ${E3_PATH2}/tools/setenv
+       elif [ -d "$E3_PATH3" ]; then
+          . ${E3_PATH3}/setE3Env.bash
+       else
+          echo "We couldn't find E3 source path now."
+	  echo "please go your e3 path and "
+	  echo "source tools/setenv"
+       fi
+}
 
